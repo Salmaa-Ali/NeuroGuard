@@ -83,6 +83,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "Validation failed", request, fieldErrors);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleBadRequest(BadRequestException ex, WebRequest request) {
+        List<ApiError.FieldError> fieldErrors = ex.getField() == null
+                ? List.of() : List.of(new ApiError.FieldError(ex.getField(), ex.getMessage()));
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request, fieldErrors);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Object> handleInvalidCredentials(InvalidCredentialsException ex, WebRequest request) {
+        return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), request, List.of());
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleNotFound(ResourceNotFoundException ex, WebRequest request) {
         return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());

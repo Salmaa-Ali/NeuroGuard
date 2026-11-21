@@ -35,7 +35,8 @@ public class AuditLog {
     @Column(name = "audit_id")
     private UUID id;
 
-    @Column(name = "actor_id", nullable = false)
+    /** Null when the actor is unknown (e.g. failed login with an unknown email). */
+    @Column(name = "actor_id")
     private UUID actorId;
 
     @Enumerated(EnumType.STRING)

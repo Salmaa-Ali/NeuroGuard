@@ -1,6 +1,6 @@
 # NeuroGuard Backend
 
-Spring Boot 3.5 / Java 21 / PostgreSQL 16 / Flyway. Status: project setup + data model (v0.2.0). No business endpoints or auth yet.
+Spring Boot 3.5 / Java 21 / PostgreSQL 16 / Flyway. Status: data model, JWT authentication, role/scope authorization and admin staff endpoints. Permission rules: [`docs/permissions.md`](../docs/permissions.md).
 
 ## Prerequisites
 - JDK 21
@@ -34,10 +34,12 @@ Flyway applies `V1__init_schema.sql` on startup and Hibernate validates the enti
 ```bash
 ./mvnw test
 ```
-`ApplicationStartupTest` boots the whole app on a throwaway Postgres via Testcontainers (skipped if Docker is not running).
+**Docker Desktop must be running.** The integration tests start a throwaway Postgres 16 with Testcontainers
+and run Flyway for real, so they never touch the shared Neon database (even if your `.env` points at it).
+Running the app itself does not need Docker.
 
 ## Environment variables
-All have dev defaults; override them for any non-local environment (do not commit real secrets).
+Set them in `backend/.env` (git-ignored, see `.env.example`) or as real environment variables.
 
 | Variable | Default | Purpose |
 |---|---|---|
@@ -46,24 +48,54 @@ All have dev defaults; override them for any non-local environment (do not commi
 | `DB_PASSWORD` | `neuroguard` | DB password (also used by docker-compose) |
 | `DB_NAME`, `DB_PORT` | `neuroguard`, `5432` | docker-compose only |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` | Comma-separated allowed origins |
+| `JWT_SECRET` | none | HS256 signing key, **at least 32 bytes**. Required outside the `dev` profile (startup fails if missing/short). In `dev`, if unset, a random per-run key is used, so tokens stop working after every restart: set it in `.env` for a stable token. Generate one: `openssl rand -base64 48` |
+| `JWT_EXPIRY_MINUTES` | `60` | Access token lifetime |
+| `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` | none | If no ADMIN exists at startup, one is created from these (password min 8 chars). Skipped with a warning if unset. The password is never logged. Once an admin exists they are ignored, so remove them from `.env` afterwards. |
 
-See `.env.example`.
+All teammates share the same database, so share one `JWT_SECRET` only if you want to reuse each other's tokens (not required).
 
 ## API docs
 - Swagger UI: http://localhost:8080/swagger-ui.html
 - OpenAPI JSON: http://localhost:8080/v3/api-docs
 - Health: http://localhost:8080/actuator/health
 
-The Authorize button takes a bearer JWT (JWT issuing arrives in the next task).
+## Authentication: how to get a token
+1. Make sure an admin exists (set `BOOTSTRAP_ADMIN_EMAIL` / `BOOTSTRAP_ADMIN_PASSWORD` in `.env` for the first start).
+2. Log in:
+   ```bash
+   curl -s -X POST http://localhost:8080/api/auth/staff/login \
+     -H 'Content-Type: application/json' \
+     -d '{"email":"admin@example.com","password":"your-password"}'
+   ```
+   Response: `{ "accessToken": "...", "tokenType": "Bearer", "expiresIn": 3600, "userType": "STAFF", "role": "ADMIN", "scope": null }`.
+   Patients use `POST /api/auth/patient/login`.
+3. Call protected endpoints with `Authorization: Bearer <accessToken>`.
+4. In Swagger UI: run the login request under "Authentication", copy `accessToken`, click **Authorize**,
+   paste the token (without the word "Bearer"), then try e.g. `GET /api/admin/staff`.
+
+Wrong email and wrong password both return 401 "Invalid email or password". Missing, malformed, expired or
+tampered tokens return 401; a valid token without permission returns 403 (same JSON error shape).
+Logins (success and failure) and staff changes are written to `audit_log`.
+Not implemented yet: login rate limiting/lockout and token revocation (role changes apply after the token expires).
+
+## Endpoints so far
+| Endpoint | Access |
+|---|---|
+| `POST /api/auth/staff/login`, `POST /api/auth/patient/login` | public |
+| `POST /api/admin/staff`, `GET /api/admin/staff` (paged: `page`, `size` max 100, `sortBy` = name/email/createdAt), `GET /api/admin/staff/{id}`, `PATCH /api/admin/staff/{id}/role` | Admin |
+| `GET /api/patients/{patientId}` | Neurologist, Radiologist, MRI tech, Billing clerk, or the patient (own) |
+
+Staff rules: `CLINICAL_STAFF` needs a `permissionScope`, `ADMIN` must have none (400); duplicate email 409;
+password 8 to 72 characters; the last remaining ADMIN cannot be demoted (409). Password hashes are never returned.
 
 ## Errors
 Every error uses one shape:
 ```json
 { "timestamp": "...", "status": 401, "error": "Unauthorized", "message": "...", "path": "/api/...", "fieldErrors": [ { "field": "...", "message": "..." } ] }
 ```
-Throw `ResourceNotFoundException` (404) or `ConflictException` (409) from services.
+Throw `ResourceNotFoundException` (404), `ConflictException` (409) or `BadRequestException` (400) from services.
 
 ## Layout
-`com.neuroguard.{config, common, patient, staff, appointment, clinical, billing, imaging, scanner, audit}`;
+`com.neuroguard.{config, common, security, auth, patient, staff, appointment, clinical, billing, imaging, scanner, audit}`;
 each module has `entity/`, `repository/` and placeholder `service/`, `controller/`, `dto/` packages.
 Notes: the `service` table maps to `ServiceItem`; `audit_log.actor_id` is polymorphic (staff or patient) so it has no FK.
