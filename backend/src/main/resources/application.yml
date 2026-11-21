@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: neuroguard-backend
+  profiles:
+    default: dev
+  config:
+    # Optional backend/.env (git-ignored) supplies DB_URL, DB_USERNAME, DB_PASSWORD, ...
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/neuroguard}
+    username: ${DB_USERNAME:neuroguard}
+    password: ${DB_PASSWORD:neuroguard}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
