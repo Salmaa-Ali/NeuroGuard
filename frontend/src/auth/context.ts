@@ -1,6 +1,5 @@
 import { createContext, useContext } from 'react'
 import type { LoginInput, PermissionScope, Role, UserType } from '../api/types'
-import type { LoginKind } from './api'
 
 export interface AuthUser {
   id: string
@@ -16,8 +15,11 @@ export interface AuthContextValue {
   user: AuthUser | null
   /** True while the profile (name) is still loading. */
   isProfileLoading: boolean
-  /** Throws the axios error on failure so the caller can show the backend's message. */
-  login: (kind: LoginKind, credentials: LoginInput) => Promise<void>
+  /**
+   * Logs in as staff or patient (it tries staff first, then patient).
+   * Throws the axios error on failure so the caller can show the backend's message.
+   */
+  login: (credentials: LoginInput) => Promise<void>
   logout: () => void
 }
 

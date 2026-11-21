@@ -1,7 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useSyncExternalStore, type ReactNode } from 'react'
-import type { LoginInput } from '../api/types'
-import { fetchMe, loginRequest, type LoginKind } from './api'
+import { toApiError } from '../api/errors'
+import type { LoginInput, LoginResult } from '../api/types'
+import { fetchMe, loginRequest } from './api'
 import { AuthContext, type AuthContextValue, type AuthUser } from './context'
 import { clearSession, createSession, getSession, setSession, subscribe } from './session'
 
@@ -37,8 +38,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => clearTimeout(timer)
   }, [session, queryClient])
 
-  const login = useCallback(async (kind: LoginKind, credentials: LoginInput) => {
-    const result = await loginRequest(kind, credentials)
+  // One login form for everybody: try the staff endpoint, and only if it says "invalid email or
+  // password" (401) try the patient endpoint. Any other failure (400, network, 500) stops right away.
+  const login = useCallback(async (credentials: LoginInput) => {
+    let result: LoginResult
+    try {
+      result = await loginRequest('staff', credentials)
+    } catch (err) {
+      if (toApiError(err).status !== 401) throw err
+      result = await loginRequest('patient', credentials) // a second 401 is the final answer
+    }
     setSession(createSession(result, credentials.email))
   }, [])
 

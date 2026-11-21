@@ -46,7 +46,8 @@ Run `npm run gen:api` whenever the backend API changes and commit the result. Th
 
 ## How login and permissions work
 
-- `POST /api/auth/staff/login` or `/patient/login` (the Staff/Patient toggle). The user's id is the `sub`
+- One login form for everybody: the app calls `POST /api/auth/staff/login` and, only if that answers 401, falls
+  back to `/api/auth/patient/login` (any other error stops immediately). The user's id is the `sub`
   claim of the JWT; the name comes from `GET /api/me`, which the app calls after login and on every refresh.
 - The session lives in memory and `sessionStorage` (a refresh keeps you logged in, closing the tab logs you out).
   The app logs out by itself when the token expires.
@@ -111,7 +112,7 @@ The live `/v3/api-docs` matches the brief, with these notes:
 
 ## Try it by hand
 
-1. Start the backend and `npm run dev`; log in as the admin (Staff).
+1. Start the backend and `npm run dev`; log in as the admin.
 2. Staff management > Add staff: create a Neurologist and a Billing clerk (scope dropdown appears for clinical staff).
 3. Change a role from the table; log in as each user (another browser profile or after logging out) and watch the menu change.
 4. Log in as a patient: My profile loads; opening `/admin/staff` shows the 403 screen.

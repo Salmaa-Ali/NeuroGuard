@@ -30,31 +30,69 @@ describe('LoginPage', () => {
     expect(screen.getByRole('banner')).not.toHaveTextContent('admin@example.com')
   })
 
-  it('uses the patient endpoint when "Patient" is selected', async () => {
-    const patientLogin = vi.fn()
-    const staffLogin = vi.fn()
+  it('has no "staff or patient" choice on the form', () => {
+    renderApp('/login')
+    expect(screen.queryByText('I am a')).not.toBeInTheDocument()
+    expect(screen.queryByRole('radio')).not.toBeInTheDocument()
+  })
+
+  it('logs a patient in by falling back to the patient endpoint after the staff one says 401', async () => {
+    const calls: string[] = []
     server.use(
-      http.post(`${API}/api/auth/patient/login`, async ({ request }) => {
-        patientLogin(await request.json())
-        return HttpResponse.json(loginResponse('PATIENT'))
-      }),
       http.post(`${API}/api/auth/staff/login`, () => {
-        staffLogin()
+        calls.push('staff')
         return apiError(401, 'Invalid email or password')
+      }),
+      http.post(`${API}/api/auth/patient/login`, async ({ request }) => {
+        calls.push('patient')
+        expect(await request.json()).toEqual({ email: 'pat@example.com', password: 'secret-pass' })
+        return HttpResponse.json(loginResponse('PATIENT'))
       }),
     )
     renderApp('/login')
-    await userEvent.setup().click(screen.getByLabelText('Patient'))
     await fillAndSubmit('pat@example.com', 'secret-pass')
 
     expect(await screen.findByRole('heading', { name: /Welcome/ })).toBeInTheDocument()
-    expect(patientLogin).toHaveBeenCalledWith({ email: 'pat@example.com', password: 'secret-pass' })
-    expect(staffLogin).not.toHaveBeenCalled()
+    expect(calls).toEqual(['staff', 'patient'])
+    expect(screen.getByRole('navigation', { name: 'Main' })).toHaveTextContent('My profile')
   })
 
-  it("shows the backend's message on a 401 and does not treat it as an expired session", async () => {
+  it('does not call the patient endpoint when the staff login succeeds', async () => {
+    const patientLogin = vi.fn()
+    server.use(
+      http.post(`${API}/api/auth/staff/login`, () => HttpResponse.json(loginResponse('ADMIN'))),
+      http.post(`${API}/api/auth/patient/login`, () => {
+        patientLogin()
+        return HttpResponse.json(loginResponse('PATIENT'))
+      }),
+    )
+    renderApp('/login')
+    await fillAndSubmit('admin@example.com', 'secret-pass')
+
+    expect(await screen.findByRole('heading', { name: /Welcome/ })).toBeInTheDocument()
+    expect(patientLogin).not.toHaveBeenCalled()
+  })
+
+  it('stops after a non-401 staff error instead of trying the patient endpoint', async () => {
+    const patientLogin = vi.fn()
+    server.use(
+      http.post(`${API}/api/auth/staff/login`, () => apiError(500, 'An unexpected error occurred')),
+      http.post(`${API}/api/auth/patient/login`, () => {
+        patientLogin()
+        return HttpResponse.json(loginResponse('PATIENT'))
+      }),
+    )
+    renderApp('/login')
+    await fillAndSubmit('someone@example.com', 'secret-pass')
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('An unexpected error occurred')
+    expect(patientLogin).not.toHaveBeenCalled()
+  })
+
+  it("shows the backend's message when both logins say 401, without treating it as an expired session", async () => {
     server.use(
       http.post(`${API}/api/auth/staff/login`, () => apiError(401, 'Invalid email or password')),
+      http.post(`${API}/api/auth/patient/login`, () => apiError(401, 'Invalid email or password')),
     )
     renderApp('/login')
     await fillAndSubmit('admin@example.com', 'wrong-password')
