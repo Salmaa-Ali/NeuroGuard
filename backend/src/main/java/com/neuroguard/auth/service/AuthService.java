@@ -5,6 +5,9 @@ import com.neuroguard.audit.entity.ActorType;
 import com.neuroguard.audit.service.AuditService;
 import com.neuroguard.auth.dto.LoginRequest;
 import com.neuroguard.auth.dto.LoginResponse;
+import com.neuroguard.auth.dto.MeResponse;
+import com.neuroguard.security.CurrentUser;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import com.neuroguard.common.Emails;
 import com.neuroguard.common.InvalidCredentialsException;
 import com.neuroguard.patient.entity.Patient;
@@ -70,6 +73,21 @@ public class AuthService {
                 "PATIENT", patient.getId());
         JwtService.IssuedToken token = jwtService.issue(UserType.PATIENT, patient.getId(), Role.PATIENT, null);
         return LoginResponse.bearer(token.value(), token.expiresInSeconds(), UserType.PATIENT, Role.PATIENT, null);
+    }
+
+    /** The caller's identity. Name and email come from the database, role and scope from the token. */
+    public MeResponse me() {
+        CurrentUser user = CurrentUser.require();
+        if (user.isStaff()) {
+            Staff staff = staffRepository.findById(user.id())
+                    .orElseThrow(() -> new AuthenticationCredentialsNotFoundException("Account no longer exists"));
+            return new MeResponse(staff.getId(), staff.getName(), staff.getEmail(),
+                    user.userType(), user.role(), user.scope());
+        }
+        Patient patient = patientRepository.findById(user.id())
+                .orElseThrow(() -> new AuthenticationCredentialsNotFoundException("Account no longer exists"));
+        return new MeResponse(patient.getId(), patient.getName(), patient.getEmail(),
+                user.userType(), user.role(), user.scope());
     }
 
     /** Always performs one BCrypt comparison, whether or not the account exists. */

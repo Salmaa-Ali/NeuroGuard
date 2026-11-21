@@ -57,6 +57,7 @@ Tokens with inconsistent claims (e.g. `CLINICAL_STAFF` without `perm_scope`) are
 | Endpoint | Rule |
 |---|---|
 | `POST /api/auth/staff/login`, `POST /api/auth/patient/login` | public |
+| `GET /api/me` | Any authenticated user (own identity) |
 | `POST/GET /api/admin/staff`, `GET /api/admin/staff/{id}`, `PATCH /api/admin/staff/{id}/role` | Admin only |
 | `GET /api/patients/{patientId}` | Neurologist, Radiologist, MRI tech, Billing clerk, or the patient (own) |
 

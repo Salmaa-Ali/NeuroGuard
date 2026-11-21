@@ -83,6 +83,7 @@ Not implemented yet: login rate limiting/lockout and token revocation (role chan
 |---|---|
 | `POST /api/auth/staff/login`, `POST /api/auth/patient/login` | public |
 | `POST /api/admin/staff`, `GET /api/admin/staff` (paged: `page`, `size` max 100, `sortBy` = name/email/createdAt), `GET /api/admin/staff/{id}`, `PATCH /api/admin/staff/{id}/role` | Admin |
+| `GET /api/me` | Any authenticated user: returns `{ id, name, email, userType, role, scope }` for the caller |
 | `GET /api/patients/{patientId}` | Neurologist, Radiologist, MRI tech, Billing clerk, or the patient (own) |
 
 Staff rules: `CLINICAL_STAFF` needs a `permissionScope`, `ADMIN` must have none (400); duplicate email 409;
