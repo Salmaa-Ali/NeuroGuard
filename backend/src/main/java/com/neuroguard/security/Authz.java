@@ -32,6 +32,10 @@ public final class Authz {
             "(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST'))"
                     + " or hasRole('PATIENT')";
 
+    /** Billing writes (service catalogue, invoices): Billing clerk only. */
+    public static final String BILLING_WRITE =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('BILLING_CLERK')";
+
     /** Patient profile & history, read: Neurologist, Radiologist, MRI tech, Billing clerk, or the patient (own). */
     public static final String PATIENT_PROFILE_READ =
             "(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BILLING_CLERK'))"
