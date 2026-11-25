@@ -47,6 +47,8 @@ Tokens with inconsistent claims (e.g. `CLINICAL_STAFF` without `perm_scope`) are
 - Read the caller with `CurrentUser.require()` (id, userType, role, scope). Never parse the token in a service.
 - For "own" rules, the path/query parameter must be named `patientId` (or pass the id explicitly to `isSelf`),
   and services that load a record by another id (e.g. an invoice) must compare its patient to `CurrentUser`.
+  Use `common.PatientRecordAccess.requireReadable(...)`: patients get 403 for someone else's record **and** for
+  an unknown id (no probing which ids exist); staff get 404 for an unknown id.
 - Example:
   ```java
   @PreAuthorize("(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST')) or @access.isSelf(#patientId)")
@@ -62,6 +64,9 @@ Tokens with inconsistent claims (e.g. `CLINICAL_STAFF` without `perm_scope`) are
 | `POST/GET /api/admin/staff`, `GET /api/admin/staff/{id}`, `PATCH /api/admin/staff/{id}/role` | Admin only |
 | `GET /api/patients/{patientId}` | Neurologist, Radiologist, MRI tech, Billing clerk, or the patient (own) |
 | `GET /api/icd10?q=`, `GET /api/icd10/{code}` | Any staff (`Authz.ANY_STAFF`); patients 403 |
+| `POST /api/patients/{patientId}/diagnoses` | Neurologist (`Authz.CLINICAL_WRITE`) |
+| `GET /api/patients/{patientId}/diagnoses` | Neurologist, Radiologist, or the patient (own) (`Authz.CLINICAL_READ_BY_PATIENT`) |
+| `GET /api/diagnoses/{id}` | Neurologist, Radiologist, or the patient if the diagnosis is theirs (`Authz.CLINICAL_READ_BY_RECORD` + service check) |
 
 ## Known limits (for later)
 - Role changes do not revoke tokens already issued; they carry the old role until they expire.

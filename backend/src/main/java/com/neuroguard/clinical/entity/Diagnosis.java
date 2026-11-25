@@ -1,6 +1,7 @@
 package com.neuroguard.clinical.entity;
 
 import com.neuroguard.common.BaseEntity;
+import com.neuroguard.icd10.entity.Icd10Code;
 import com.neuroguard.patient.entity.Patient;
 import com.neuroguard.staff.entity.Staff;
 import jakarta.persistence.Column;
@@ -41,6 +42,11 @@ public class Diagnosis extends BaseEntity {
 
     @Column(name = "icd10_code", nullable = false, length = 10)
     private String icd10Code;
+
+    /** Read-only view of the same column, so responses can show the description without a second query. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "icd10_code", insertable = false, updatable = false)
+    private Icd10Code icd10;
 
     @Column(name = "diagnosed_at", nullable = false)
     private Instant diagnosedAt;
