@@ -44,4 +44,8 @@ public class Diagnosis extends BaseEntity {
 
     @Column(name = "diagnosed_at", nullable = false)
     private Instant diagnosedAt;
+
+    /** Optional free-text clinical notes from the diagnosing neurologist. */
+    @Column(columnDefinition = "text")
+    private String notes;
 }
