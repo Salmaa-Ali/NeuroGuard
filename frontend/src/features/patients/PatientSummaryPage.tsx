@@ -1,21 +1,26 @@
 import { Link, useParams } from 'react-router-dom'
-import { PageHeader } from '../../components/PageHeader'
-import { PatientDetails } from './PatientDetails'
+import { PageHeader } from '@/components/app/PageHeader'
+import { PatientDetails } from '@/components/app/PatientDetails'
 
-/** Route: /patients/:patientId (clinical staff). */
 export function PatientSummaryPage() {
-  const { patientId = '' } = useParams<{ patientId: string }>()
+  const { patientId, id } = useParams<{ patientId?: string; id?: string }>()
+  const actualId = patientId ?? id
+
+  if (!actualId) {
+    return <p className="text-sm text-destructive">No patient ID provided.</p>
+  }
+
   return (
     <>
       <PageHeader
         title="Patient summary"
         actions={
-          <Link to="/patients" className="text-sm font-medium text-accent-600 hover:underline">
+          <Link to="/patients" className="text-sm font-medium text-primary hover:underline">
             ← Patients
           </Link>
         }
       />
-      <PatientDetails patientId={patientId} />
+      <PatientDetails patientId={actualId} />
     </>
   )
 }

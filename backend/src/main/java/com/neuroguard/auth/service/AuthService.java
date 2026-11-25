@@ -6,19 +6,22 @@ import com.neuroguard.audit.service.AuditService;
 import com.neuroguard.auth.dto.LoginRequest;
 import com.neuroguard.auth.dto.LoginResponse;
 import com.neuroguard.auth.dto.MeResponse;
-import com.neuroguard.security.CurrentUser;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import com.neuroguard.auth.dto.RegisterPatientRequest;
+import com.neuroguard.common.ConflictException;
 import com.neuroguard.common.Emails;
 import com.neuroguard.common.InvalidCredentialsException;
 import com.neuroguard.patient.entity.Patient;
 import com.neuroguard.patient.repository.PatientRepository;
+import com.neuroguard.security.CurrentUser;
 import com.neuroguard.security.JwtService;
 import com.neuroguard.security.Role;
 import com.neuroguard.security.UserType;
 import com.neuroguard.staff.entity.Staff;
 import com.neuroguard.staff.repository.StaffRepository;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -71,6 +74,36 @@ public class AuthService {
         Patient patient = found.get();
         auditService.recordIndependent(ActorType.PATIENT, patient.getId(), AuditAction.LOGIN_SUCCESS,
                 "PATIENT", patient.getId());
+        JwtService.IssuedToken token = jwtService.issue(UserType.PATIENT, patient.getId(), Role.PATIENT, null);
+        return LoginResponse.bearer(token.value(), token.expiresInSeconds(), UserType.PATIENT, Role.PATIENT, null);
+    }
+
+    @Transactional
+    public LoginResponse registerPatient(RegisterPatientRequest request) {
+        String email = Emails.normalize(request.email());
+        if (patientRepository.existsByEmail(email)) {
+            throw new ConflictException("A patient account with this email already exists");
+        }
+
+        long seq = patientRepository.nextPatientNumberSeq();
+        String patientNumber = String.format("NG-%05d", seq);
+
+        Patient patient = new Patient();
+        patient.setPatientNumber(patientNumber);
+        patient.setName(request.name().trim());
+        patient.setEmail(email);
+        patient.setPasswordHash(passwordEncoder.encode(request.password()));
+        patient.setDateOfBirth(request.dateOfBirth());
+        patient.setPhone(request.phone() != null && !request.phone().isBlank() ? request.phone().trim() : null);
+        patient.setNeurologyHistory(
+                request.neurologyHistory() != null && !request.neurologyHistory().isBlank()
+                        ? request.neurologyHistory().trim()
+                        : null);
+        patient = patientRepository.saveAndFlush(patient);
+
+        auditService.recordIndependent(ActorType.PATIENT, patient.getId(), AuditAction.PATIENT_REGISTERED,
+                "PATIENT", patient.getId());
+
         JwtService.IssuedToken token = jwtService.issue(UserType.PATIENT, patient.getId(), Role.PATIENT, null);
         return LoginResponse.bearer(token.value(), token.expiresInSeconds(), UserType.PATIENT, Role.PATIENT, null);
     }

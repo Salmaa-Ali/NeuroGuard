@@ -53,3 +53,34 @@ export const ACCESS = {
     scopes: ['NEUROLOGIST', 'RADIOLOGIST', 'MRI_TECHNOLOGIST', 'BILLING_CLERK'],
   },
 } as const satisfies Record<string, Access>
+
+export interface NavItem {
+  label: string
+  to: string
+  access: Access
+}
+
+/** Sidebar order mirrors the original feature list. */
+export const AREAS: NavItem[] = [
+  { label: 'Staff management', to: '/admin/staff', access: ACCESS.admin },
+  { label: 'Audit log', to: '/audit-log', access: ACCESS.auditLog },
+  { label: 'Patients', to: '/patients', access: ACCESS.patientsMenu },
+  { label: 'My profile', to: '/profile', access: ACCESS.patient },
+  { label: 'Appointments', to: '/appointments', access: ACCESS.appointments },
+  { label: 'My appointments', to: '/my/appointments', access: ACCESS.patient },
+  { label: 'MRI orders', to: '/mri-orders', access: ACCESS.mriOrders },
+  { label: 'MRI studies / Viewer', to: '/studies', access: ACCESS.studies },
+  { label: 'DICOM upload', to: '/dicom-upload', access: ACCESS.dicomUpload },
+  { label: 'Clinical', to: '/clinical', access: ACCESS.clinical },
+  { label: 'My prescriptions', to: '/my/prescriptions', access: ACCESS.patient },
+  { label: 'Reports', to: '/reports', access: ACCESS.reports },
+  { label: 'My reports', to: '/my/reports', access: ACCESS.patient },
+  { label: 'Scanners & QA', to: '/scanners', access: ACCESS.scanners },
+  { label: 'Invoices', to: '/invoices', access: ACCESS.invoices },
+  { label: 'Payments', to: '/payments', access: ACCESS.payments },
+  { label: 'My invoices', to: '/my/invoices', access: ACCESS.patient },
+]
+
+export function getAreas(user: AccessSubject | null): NavItem[] {
+  return AREAS.filter((a) => isAllowed(user, a.access))
+}

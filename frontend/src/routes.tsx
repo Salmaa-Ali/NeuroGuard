@@ -3,6 +3,7 @@ import { RequireAuth } from './auth/RequireAuth'
 import { RequireRole } from './auth/RequireRole'
 import { dashboard } from './features/dashboard/feature'
 import { LoginPage } from './features/auth/LoginPage'
+import { ResetPasswordPage } from './features/auth/ResetPasswordPage'
 import { NotFoundPage } from './features/errors/NotFoundPage'
 import { features } from './features'
 import type { FeatureRoute } from './features/types'
@@ -20,6 +21,7 @@ function toRoute(route: FeatureRoute): RouteObject {
 
 export const appRoutes: RouteObject[] = [
   { path: '/login', element: <LoginPage /> },
+  { path: '/reset-password', element: <ResetPasswordPage /> },
   {
     element: <RequireAuth />,
     children: [

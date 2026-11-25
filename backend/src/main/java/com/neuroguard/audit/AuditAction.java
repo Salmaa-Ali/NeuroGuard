@@ -8,6 +8,7 @@ public final class AuditAction {
 
     public static final String LOGIN_SUCCESS = "LOGIN_SUCCESS";
     public static final String LOGIN_FAILED = "LOGIN_FAILED";
+    public static final String PATIENT_REGISTERED = "PATIENT_REGISTERED";
     public static final String STAFF_CREATED = "STAFF_CREATED";
     public static final String STAFF_ROLE_CHANGED = "STAFF_ROLE_CHANGED";
     public static final String DIAGNOSIS_CREATED = "DIAGNOSIS_CREATED";
