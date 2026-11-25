@@ -15,8 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.UUID;
 
 /** Billable services. Prices here are current list prices; invoices keep their own snapshot. */
@@ -45,7 +43,7 @@ public class ServiceCatalogueService {
         }
         ServiceItem service = new ServiceItem();
         service.setName(name);
-        service.setPrice(money(request.price()));
+        service.setPrice(Money.of(request.price()));
         service = repository.saveAndFlush(service);
 
         CurrentUser actor = CurrentUser.require();
@@ -65,7 +63,7 @@ public class ServiceCatalogueService {
             throw new ConflictException("A service named '" + name + "' already exists");
         }
         service.setName(name);
-        service.setPrice(money(request.price()));
+        service.setPrice(Money.of(request.price()));
         service = repository.saveAndFlush(service);
 
         CurrentUser actor = CurrentUser.require();
@@ -87,10 +85,5 @@ public class ServiceCatalogueService {
     @Transactional(readOnly = true)
     public ServiceItem find(UUID id) {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Service", id));
-    }
-
-    /** All money is stored with exactly 2 decimals (validation already limits input to 2). */
-    private static BigDecimal money(BigDecimal amount) {
-        return amount.setScale(2, RoundingMode.HALF_UP);
     }
 }
