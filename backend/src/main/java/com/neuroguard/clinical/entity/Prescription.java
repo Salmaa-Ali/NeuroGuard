@@ -1,6 +1,7 @@
 package com.neuroguard.clinical.entity;
 
 import com.neuroguard.common.BaseEntity;
+import com.neuroguard.staff.entity.Staff;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,6 +32,11 @@ public class Prescription extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "plan_id", nullable = false)
     private TreatmentPlan plan;
+
+    /** The prescribing neurologist (may differ from the plan's author). */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "staff_id", nullable = false)
+    private Staff staff;
 
     @Column(name = "medication_details", nullable = false, columnDefinition = "text")
     private String medicationDetails;

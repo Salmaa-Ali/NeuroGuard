@@ -98,7 +98,10 @@ public class TreatmentPlanService {
         return PageResponse.of(plans, p -> TreatmentPlanResponse.from(p, byPlan.getOrDefault(p.getId(), List.of())));
     }
 
-    /** Audited like other clinical writes; the audit row is the record of who prescribed. */
+    /**
+     * The prescriber is the caller, not the plan's author: another neurologist may add medication to a
+     * colleague's plan, and accountability for a prescription belongs to whoever issued it.
+     */
     @Transactional
     public PrescriptionResponse addPrescription(UUID planId, CreatePrescriptionRequest request) {
         TreatmentPlan plan = planRepository.findById(planId)
@@ -107,6 +110,7 @@ public class TreatmentPlanService {
 
         Prescription prescription = new Prescription();
         prescription.setPlan(plan);
+        prescription.setStaff(currentStaff(actor));
         prescription.setMedicationDetails(request.medicationDetails().trim());
         prescription = prescriptionRepository.saveAndFlush(prescription);
 

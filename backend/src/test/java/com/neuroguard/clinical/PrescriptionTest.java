@@ -1,6 +1,9 @@
 package com.neuroguard.clinical;
 
 import com.neuroguard.patient.entity.Patient;
+import com.neuroguard.staff.entity.BaseRole;
+import com.neuroguard.staff.entity.PermissionScope;
+import com.neuroguard.staff.entity.Staff;
 import com.neuroguard.support.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
@@ -39,6 +42,8 @@ class PrescriptionTest extends AbstractIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.planId").value(planId))
                 .andExpect(jsonPath("$.medicationDetails").value("TEST Levetiracetam 500 mg twice daily"))
+                .andExpect(jsonPath("$.staffId").value(neurologist.getId().toString()))
+                .andExpect(jsonPath("$.staffName").value(neurologist.getName()))
                 .andExpect(jsonPath("$.createdAt").isNotEmpty())
                 .andReturn().getResponse().getContentAsString();
         String id = objectMapper.readTree(json).get("id").asText();
@@ -47,6 +52,29 @@ class PrescriptionTest extends AbstractIntegrationTest {
                 SELECT count(*) FROM audit_log WHERE action = 'PRESCRIPTION_CREATED' AND actor_id = ?
                   AND entity_type = 'PRESCRIPTION' AND entity_id = ?::uuid
                 """, Integer.class, neurologist.getId(), id));
+    }
+
+    @Test
+    void prescriberIsTheCallerNotThePlanAuthor() throws Exception {
+        String planId = createPlan(patientA); // authored by the fixture neurologist
+        Staff colleague = new Staff();
+        colleague.setName("TEST Second Neurologist");
+        colleague.setEmail("neuro2@neuroguard.test");
+        colleague.setPasswordHash(neurologist.getPasswordHash());
+        colleague.setBaseRole(BaseRole.CLINICAL_STAFF);
+        colleague.setPermissionScope(PermissionScope.NEUROLOGIST);
+        colleague = staffRepository.save(colleague);
+
+        postJson(url(planId), bearer(colleague), Map.of("medicationDetails", "TEST Topiramate 25 mg nightly",
+                "staffId", neurologist.getId().toString())) // ignored: prescriber comes from the token
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.staffId").value(colleague.getId().toString()));
+
+        get(TreatmentPlanTest.plansUrl(patientA), bearer(patientA)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].staffId").value(neurologist.getId().toString()))
+                .andExpect(jsonPath("$.content[0].prescriptions[0].staffName").value("TEST Second Neurologist"));
+        get(url(planId), bearer(radiologist)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].staffId").value(colleague.getId().toString()));
     }
 
     @Test
