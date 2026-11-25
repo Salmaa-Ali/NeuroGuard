@@ -49,6 +49,13 @@ public final class Authz {
      */
     public static final String INVOICE_READ_BY_RECORD = INVOICE_READ_ALL + " or hasRole('PATIENT')";
 
+    /**
+     * Simulated payment of an invoice: Billing clerk, or a patient. The patient part is only a gate: the
+     * service must check the invoice belongs to them (PatientRecordAccess).
+     */
+    public static final String INVOICE_PAY =
+            "(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('BILLING_CLERK')) or hasRole('PATIENT')";
+
     /** Patient profile & history, read: Neurologist, Radiologist, MRI tech, Billing clerk, or the patient (own). */
     public static final String PATIENT_PROFILE_READ =
             "(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BILLING_CLERK'))"

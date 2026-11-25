@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+/** {@code payment} is the completed payment of a PAID invoice, otherwise null. */
 public record InvoiceResponse(
         UUID id,
         UUID patientId,
@@ -17,12 +18,14 @@ public record InvoiceResponse(
         LocalDate issueDate,
         BigDecimal totalAmount,
         List<InvoiceItemResponse> items,
+        PaymentResponse payment,
         Instant createdAt,
         Instant updatedAt) {
 
-    public static InvoiceResponse from(Invoice inv, List<InvoiceItemResponse> items) {
+    public static InvoiceResponse from(Invoice inv, List<InvoiceItemResponse> items, PaymentResponse payment) {
         return new InvoiceResponse(inv.getId(), inv.getPatient().getId(),
                 inv.getAppointment() == null ? null : inv.getAppointment().getId(),
-                inv.getStatus(), inv.getIssueDate(), inv.getTotalAmount(), items, inv.getCreatedAt(), inv.getUpdatedAt());
+                inv.getStatus(), inv.getIssueDate(), inv.getTotalAmount(), items, payment,
+                inv.getCreatedAt(), inv.getUpdatedAt());
     }
 }

@@ -17,4 +17,5 @@ public final class AuditAction {
     public static final String SERVICE_UPDATED = "SERVICE_UPDATED";
     public static final String INVOICE_CREATED = "INVOICE_CREATED";
     public static final String INVOICE_CANCELLED = "INVOICE_CANCELLED";
+    public static final String PAYMENT_COMPLETED = "PAYMENT_COMPLETED";
 }

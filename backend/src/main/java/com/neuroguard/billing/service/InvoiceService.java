@@ -7,12 +7,14 @@ import com.neuroguard.audit.service.AuditService;
 import com.neuroguard.billing.dto.CreateInvoiceRequest;
 import com.neuroguard.billing.dto.InvoiceItemResponse;
 import com.neuroguard.billing.dto.InvoiceResponse;
+import com.neuroguard.billing.dto.PaymentResponse;
 import com.neuroguard.billing.entity.Invoice;
 import com.neuroguard.billing.entity.InvoiceItem;
 import com.neuroguard.billing.entity.InvoiceStatus;
 import com.neuroguard.billing.entity.ServiceItem;
 import com.neuroguard.billing.repository.InvoiceItemRepository;
 import com.neuroguard.billing.repository.InvoiceRepository;
+import com.neuroguard.billing.repository.PaymentRepository;
 import com.neuroguard.billing.repository.ServiceItemRepository;
 import com.neuroguard.common.BadRequestException;
 import com.neuroguard.common.ConflictException;
@@ -47,18 +49,21 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final InvoiceItemRepository itemRepository;
     private final ServiceItemRepository serviceRepository;
+    private final PaymentRepository paymentRepository;
     private final PatientRepository patientRepository;
     private final AppointmentRepository appointmentRepository;
     private final Icd10Service icd10Service;
     private final AuditService auditService;
 
     public InvoiceService(InvoiceRepository invoiceRepository, InvoiceItemRepository itemRepository,
-                          ServiceItemRepository serviceRepository, PatientRepository patientRepository,
+                          ServiceItemRepository serviceRepository, PaymentRepository paymentRepository,
+                          PatientRepository patientRepository,
                           AppointmentRepository appointmentRepository, Icd10Service icd10Service,
                           AuditService auditService) {
         this.invoiceRepository = invoiceRepository;
         this.itemRepository = itemRepository;
         this.serviceRepository = serviceRepository;
+        this.paymentRepository = paymentRepository;
         this.patientRepository = patientRepository;
         this.appointmentRepository = appointmentRepository;
         this.icd10Service = icd10Service;
@@ -133,7 +138,7 @@ public class InvoiceService {
 
         CurrentUser actor = CurrentUser.require();
         auditService.record(actor.actorType(), actor.id(), AuditAction.INVOICE_CREATED, "INVOICE", saved.getId());
-        return InvoiceResponse.from(saved, lines.stream().map(InvoiceItemResponse::from).toList());
+        return InvoiceResponse.from(saved, lines.stream().map(InvoiceItemResponse::from).toList(), null);
     }
 
     /**
@@ -184,14 +189,26 @@ public class InvoiceService {
     }
 
     InvoiceResponse withItems(Invoice invoice) {
-        return InvoiceResponse.from(invoice, itemsByInvoice(List.of(invoice.getId()))
-                .getOrDefault(invoice.getId(), List.of()));
+        List<UUID> ids = List.of(invoice.getId());
+        return InvoiceResponse.from(invoice, itemsByInvoice(ids).getOrDefault(invoice.getId(), List.of()),
+                paymentsByInvoice(ids).get(invoice.getId()));
     }
 
     private PageResponse<InvoiceResponse> toPage(Page<Invoice> invoices) {
-        Map<UUID, List<InvoiceItemResponse>> items =
-                itemsByInvoice(invoices.getContent().stream().map(Invoice::getId).toList());
-        return PageResponse.of(invoices, inv -> InvoiceResponse.from(inv, items.getOrDefault(inv.getId(), List.of())));
+        List<UUID> ids = invoices.getContent().stream().map(Invoice::getId).toList();
+        Map<UUID, List<InvoiceItemResponse>> items = itemsByInvoice(ids);
+        Map<UUID, PaymentResponse> payments = paymentsByInvoice(ids);
+        return PageResponse.of(invoices, inv -> InvoiceResponse.from(inv, items.getOrDefault(inv.getId(), List.of()),
+                payments.get(inv.getId())));
+    }
+
+    /** At most one payment per invoice: pay() only accepts UNPAID invoices and PAID is final. */
+    private Map<UUID, PaymentResponse> paymentsByInvoice(List<UUID> invoiceIds) {
+        if (invoiceIds.isEmpty()) {
+            return Map.of();
+        }
+        return paymentRepository.findByInvoiceIdIn(invoiceIds).stream()
+                .collect(Collectors.toMap(p -> p.getInvoice().getId(), PaymentResponse::from, (a, b) -> a));
     }
 
     private Map<UUID, List<InvoiceItemResponse>> itemsByInvoice(List<UUID> invoiceIds) {
