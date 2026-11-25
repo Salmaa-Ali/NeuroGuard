@@ -43,6 +43,10 @@ public class InvoiceItem extends BaseEntity {
     @Column(nullable = false)
     private int quantity = 1;
 
+    /** Snapshot of service.price when the invoice was created; never follows later price changes. */
+    @Column(name = "unit_price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal unitPrice;
+
     @Column(name = "line_total", nullable = false, precision = 10, scale = 2)
     private BigDecimal lineTotal;
 }

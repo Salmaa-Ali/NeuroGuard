@@ -46,7 +46,8 @@ class Icd10MigrationTest extends AbstractIntegrationTest {
         UUID invoiceId = jdbc.queryForObject(
                 "INSERT INTO invoice (patient_id) VALUES (?) RETURNING invoice_id", UUID.class, patientA.getId());
         try {
-            String insert = "INSERT INTO invoice_item (invoice_id, service_id, icd10_code, line_total) VALUES (?, ?, ?, 100.00)";
+            String insert = "INSERT INTO invoice_item (invoice_id, service_id, icd10_code, unit_price, line_total) "
+                    + "VALUES (?, ?, ?, 100.00, 100.00)";
             jdbc.update(insert, invoiceId, serviceId, "G43");
             jdbc.update(insert, invoiceId, serviceId, null);
             assertThrows(DataIntegrityViolationException.class,

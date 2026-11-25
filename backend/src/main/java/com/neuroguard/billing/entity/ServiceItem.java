@@ -27,7 +27,7 @@ public class ServiceItem extends BaseEntity {
     @Column(name = "service_id")
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false, precision = 10, scale = 2)
