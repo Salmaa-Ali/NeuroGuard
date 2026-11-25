@@ -13,4 +13,9 @@ public final class AuditAction {
     public static final String DIAGNOSIS_CREATED = "DIAGNOSIS_CREATED";
     public static final String TREATMENT_PLAN_CREATED = "TREATMENT_PLAN_CREATED";
     public static final String PRESCRIPTION_CREATED = "PRESCRIPTION_CREATED";
+    public static final String SERVICE_CREATED = "SERVICE_CREATED";
+    public static final String SERVICE_UPDATED = "SERVICE_UPDATED";
+    public static final String INVOICE_CREATED = "INVOICE_CREATED";
+    public static final String INVOICE_CANCELLED = "INVOICE_CANCELLED";
+    public static final String PAYMENT_COMPLETED = "PAYMENT_COMPLETED";
 }

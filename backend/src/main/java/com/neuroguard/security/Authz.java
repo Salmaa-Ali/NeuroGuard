@@ -32,6 +32,30 @@ public final class Authz {
             "(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST'))"
                     + " or hasRole('PATIENT')";
 
+    /** Billing writes (service catalogue, invoices): Billing clerk only. */
+    public static final String BILLING_WRITE =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('BILLING_CLERK')";
+
+    /** All invoices (and payments), read: Billing clerk or Admin. */
+    public static final String INVOICE_READ_ALL =
+            "hasRole('ADMIN') or (hasRole('CLINICAL_STAFF') and @access.hasAnyScope('BILLING_CLERK'))";
+
+    /** Invoices of one patient (path variable patientId): Billing clerk, Admin, or the patient (own). */
+    public static final String INVOICE_READ_BY_PATIENT = INVOICE_READ_ALL + " or @access.isSelf(#patientId)";
+
+    /**
+     * One invoice by its own id: Billing clerk, Admin, or a patient. The patient part is only a gate: the
+     * service must check the invoice belongs to them (PatientRecordAccess).
+     */
+    public static final String INVOICE_READ_BY_RECORD = INVOICE_READ_ALL + " or hasRole('PATIENT')";
+
+    /**
+     * Simulated payment of an invoice: Billing clerk, or a patient. The patient part is only a gate: the
+     * service must check the invoice belongs to them (PatientRecordAccess).
+     */
+    public static final String INVOICE_PAY =
+            "(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('BILLING_CLERK')) or hasRole('PATIENT')";
+
     /** Patient profile & history, read: Neurologist, Radiologist, MRI tech, Billing clerk, or the patient (own). */
     public static final String PATIENT_PROFILE_READ =
             "(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BILLING_CLERK'))"
