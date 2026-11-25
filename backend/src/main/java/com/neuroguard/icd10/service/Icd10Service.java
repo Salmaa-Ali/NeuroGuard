@@ -1,6 +1,7 @@
 package com.neuroguard.icd10.service;
 
 import com.neuroguard.common.PageResponse;
+import com.neuroguard.common.Pages;
 import com.neuroguard.common.ResourceNotFoundException;
 import com.neuroguard.icd10.dto.Icd10Response;
 import com.neuroguard.icd10.entity.Icd10Code;
@@ -16,8 +17,6 @@ import java.util.Optional;
 
 @Service
 public class Icd10Service {
-
-    private static final int MAX_PAGE_SIZE = 100;
 
     private final Icd10CodeRepository repository;
 
@@ -39,8 +38,7 @@ public class Icd10Service {
      */
     @Transactional(readOnly = true)
     public PageResponse<Icd10Response> search(String q, int page, int size) {
-        PageRequest pageable = PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), MAX_PAGE_SIZE),
-                Sort.by("code"));
+        PageRequest pageable = Pages.of(page, size, Sort.by("code"));
         Page<Icd10Code> result;
         if (q == null || q.isBlank()) {
             result = repository.findAll(pageable);
