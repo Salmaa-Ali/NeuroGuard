@@ -15,6 +15,8 @@ a rule, change it here in the same PR as the code.
 | Invoices & payments | R | - | - | - | - | RW | own R + pay |
 | Scanners & calibration | R | R | R | R | RW | - | - |
 | Audit log | R | - | - | - | - | - | - |
+| Dashboard: clinical sections (aggregates) *(proposed, confirm with team)* | R | R | - | - | - | - | - |
+| Dashboard: finance section *(proposed, confirm with team)* | R | - | - | - | - | R | - |
 | ICD-10 codes (reference data) | R | R | R | R | R | R | - |
 | Service catalogue (billable services) | R | R | R | R | R | RW | - |
 
@@ -80,6 +82,14 @@ Tokens with inconsistent claims (e.g. `CLINICAL_STAFF` without `perm_scope`) are
 | `GET /api/invoices/{id}` | Billing clerk, Admin, or the patient if the invoice is theirs (`Authz.INVOICE_READ_BY_RECORD` + service check) |
 | `POST /api/invoices/{id}/pay` (simulated, no request body) | Billing clerk, or the patient if the invoice is theirs (`Authz.INVOICE_PAY` + service check) |
 | `GET /api/payments` | Billing clerk or Admin (`Authz.INVOICE_READ_ALL`) |
+| `GET /api/dashboard/patients/new-per-month`, `/diagnoses/by-category`, `/appointments/by-status`, `/mri-orders/per-week` | Admin or Neurologist (`Authz.DASHBOARD_CLINICAL`) **proposed, confirm with team** |
+| `GET /api/dashboard/finance` | Admin or Billing clerk (`Authz.DASHBOARD_FINANCE`) **proposed, confirm with team** |
+
+## Proposed rules to confirm
+- **Dashboard** (`/api/dashboard/*`): Admin sees every section, the Billing clerk only finance, the Neurologist
+  only the clinical sections; everyone else 403. The clinical sections are counts only (no patient ids or names),
+  which is why Admin may see "diagnoses by ICD-10 category" although Admin has no access to individual diagnoses.
+  Please confirm or change before the frontend relies on it.
 
 ## Known limits (for later)
 - Role changes do not revoke tokens already issued; they carry the old role until they expire.

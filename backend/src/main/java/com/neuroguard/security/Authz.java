@@ -56,6 +56,14 @@ public final class Authz {
     public static final String INVOICE_PAY =
             "(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('BILLING_CLERK')) or hasRole('PATIENT')";
 
+    /** Dashboard clinical sections (PROPOSED, confirm with team): Admin or Neurologist. Aggregates only. */
+    public static final String DASHBOARD_CLINICAL =
+            "hasRole('ADMIN') or (hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST'))";
+
+    /** Dashboard finance section (PROPOSED, confirm with team): Admin or Billing clerk. */
+    public static final String DASHBOARD_FINANCE =
+            "hasRole('ADMIN') or (hasRole('CLINICAL_STAFF') and @access.hasAnyScope('BILLING_CLERK'))";
+
     /** Patient profile & history, read: Neurologist, Radiologist, MRI tech, Billing clerk, or the patient (own). */
     public static final String PATIENT_PROFILE_READ =
             "(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BILLING_CLERK'))"
