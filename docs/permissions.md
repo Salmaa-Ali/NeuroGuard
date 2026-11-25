@@ -67,6 +67,10 @@ Tokens with inconsistent claims (e.g. `CLINICAL_STAFF` without `perm_scope`) are
 | `POST /api/patients/{patientId}/diagnoses` | Neurologist (`Authz.CLINICAL_WRITE`) |
 | `GET /api/patients/{patientId}/diagnoses` | Neurologist, Radiologist, or the patient (own) (`Authz.CLINICAL_READ_BY_PATIENT`) |
 | `GET /api/diagnoses/{id}` | Neurologist, Radiologist, or the patient if the diagnosis is theirs (`Authz.CLINICAL_READ_BY_RECORD` + service check) |
+| `POST /api/patients/{patientId}/treatment-plans` | Neurologist (`Authz.CLINICAL_WRITE`) |
+| `GET /api/patients/{patientId}/treatment-plans` (plans include their prescriptions) | Neurologist, Radiologist, or the patient (own) (`Authz.CLINICAL_READ_BY_PATIENT`) |
+| `POST /api/treatment-plans/{planId}/prescriptions` | Neurologist (`Authz.CLINICAL_WRITE`) |
+| `GET /api/treatment-plans/{planId}/prescriptions` | Neurologist, Radiologist, or the patient if the plan is theirs (`Authz.CLINICAL_READ_BY_RECORD` + service check) |
 
 ## Known limits (for later)
 - Role changes do not revoke tokens already issued; they carry the old role until they expire.
