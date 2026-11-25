@@ -71,11 +71,13 @@ public class ServiceCatalogueService {
         return ServiceResponse.from(service);
     }
 
+    /** Sorted by name because clerks pick services from this list when building an invoice. */
     @Transactional(readOnly = true)
     public PageResponse<ServiceResponse> list(int page, int size) {
         return PageResponse.of(repository.findAll(Pages.of(page, size, BY_NAME)), ServiceResponse::from);
     }
 
+    /** Shows the current list price; what a patient was charged is on the invoice line, not here. */
     @Transactional(readOnly = true)
     public ServiceResponse get(UUID id) {
         return ServiceResponse.from(find(id));

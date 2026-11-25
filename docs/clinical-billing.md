@@ -1,7 +1,162 @@
 # Clinical records, billing, ICD-10 and dashboard
 
-Backend owner: Nour. Permission rules live in [`permissions.md`](permissions.md).
-This file grows step by step; the full endpoint reference is added at the end of the work.
+Backend owner: Nour. Permission rules: [`permissions.md`](permissions.md) (single source of truth).
+All endpoints need `Authorization: Bearer <token>`; missing/invalid token -> 401, no permission -> 403,
+both in the standard error JSON (see `backend/README.md`, "Errors"). Lists are paged
+(`?page=0&size=20`, size max 100) and return `{content, page, size, totalElements, totalPages}`.
+Money is always a JSON number with 2 decimals (`1400.00`), computed with `BigDecimal`, scale 2, HALF_UP.
+
+Contents: [Endpoints](#endpoints) · [Business rules](#business-rules) · [ICD-10](#icd-10-reference-data) ·
+[Seed data](#seed-data-seed-profile) · [Use of other modules](#use-of-other-modules-note-for-farida)
+
+## Endpoints
+
+| Area | Endpoint | Who |
+|---|---|---|
+| ICD-10 | `GET /api/icd10?q=`, `GET /api/icd10/{code}` | any staff |
+| Diagnoses | `POST /api/patients/{patientId}/diagnoses` | Neurologist |
+| | `GET /api/patients/{patientId}/diagnoses`, `GET /api/diagnoses/{id}` | Neurologist, Radiologist, patient (own) |
+| Treatment plans | `POST /api/patients/{patientId}/treatment-plans` | Neurologist |
+| | `GET /api/patients/{patientId}/treatment-plans` (includes prescriptions) | Neurologist, Radiologist, patient (own) |
+| Prescriptions | `POST /api/treatment-plans/{planId}/prescriptions` | Neurologist |
+| | `GET /api/treatment-plans/{planId}/prescriptions` | Neurologist, Radiologist, patient (own) |
+| Services | `GET /api/services`, `GET /api/services/{id}` | any staff |
+| | `POST /api/services`, `PUT /api/services/{id}` | Billing clerk |
+| Invoices | `POST /api/invoices`, `POST /api/invoices/{id}/cancel` | Billing clerk |
+| | `GET /api/invoices?status=` | Billing clerk, Admin |
+| | `GET /api/patients/{patientId}/invoices?status=`, `GET /api/invoices/{id}` | Billing clerk, Admin, patient (own) |
+| Payments | `POST /api/invoices/{id}/pay` (no body) | Billing clerk, patient (own) |
+| | `GET /api/payments` | Billing clerk, Admin |
+| Dashboard *(proposed rules)* | `GET /api/dashboard/{patients/new-per-month, diagnoses/by-category, appointments/by-status, mri-orders/per-week}` | Admin, Neurologist |
+| | `GET /api/dashboard/finance` | Admin, Billing clerk |
+
+"Own" for a patient: lists use the `patientId` in the path; single records (`/api/diagnoses/{id}`,
+`/api/treatment-plans/{planId}/...`, `/api/invoices/{id}`, `/pay`) are checked in the service. A patient gets
+403 for someone else's record **and** for an unknown id; staff get 404 for an unknown id.
+
+### ICD-10
+`GET /api/icd10?q=g40.&size=5` (code prefix, dot optional, or part of the description; case-insensitive)
+```json
+{ "content": [ { "code": "G40", "description": "Epilepsy and recurrent seizures", "category": "G40" } ],
+  "page": 0, "size": 5, "totalElements": 1, "totalPages": 1 }
+```
+`GET /api/icd10/ZZZ99` -> 404.
+
+### Diagnoses
+`POST /api/patients/{patientId}/diagnoses` (Neurologist; `diagnosedAt` optional, defaults to now, not in the future)
+```json
+{ "icd10Code": "g40", "notes": "TEST focal seizures" }
+```
+201, `Location: /api/diagnoses/{id}`:
+```json
+{ "id": "…", "patientId": "…", "icd10Code": "G40", "icd10Description": "Epilepsy and recurrent seizures",
+  "icd10Category": "G40", "diagnosedAt": "2026-11-05T09:30:00Z", "notes": "TEST focal seizures",
+  "staffId": "…", "staffName": "TEST Neurologist", "createdAt": "2026-11-05T09:30:00Z" }
+```
+Unknown code -> 400 (`fieldErrors[0].field = "icd10Code"`). Lists are newest first (by `diagnosedAt`).
+
+### Treatment plans and prescriptions
+`POST /api/patients/{patientId}/treatment-plans`
+```json
+{ "description": "TEST epilepsy management", "startDate": "2026-09-05", "endDate": "2027-03-05" }
+```
+`endDate` before `startDate` -> 400 `"endDate must be on or after startDate"`. `endDate` may be omitted.
+
+`POST /api/treatment-plans/{planId}/prescriptions`
+```json
+{ "medicationDetails": "TEST Levetiracetam 500 mg, twice daily, oral" }
+```
+`GET /api/patients/{patientId}/treatment-plans` (most recently started first, prescriptions oldest first):
+```json
+{ "content": [ { "id": "…", "patientId": "…", "description": "TEST epilepsy management",
+    "startDate": "2026-09-05", "endDate": "2027-03-05", "staffId": "…", "staffName": "TEST Neurologist",
+    "createdAt": "…",
+    "prescriptions": [ { "id": "…", "planId": "…", "medicationDetails": "TEST Levetiracetam 500 mg, twice daily, oral",
+                         "staffId": "…", "staffName": "TEST Neurologist", "createdAt": "…" } ] } ],
+  "page": 0, "size": 20, "totalElements": 1, "totalPages": 1 }
+```
+The prescriber (`staffId`) is whoever created the prescription, which may differ from the plan's author.
+
+### Service catalogue
+`POST /api/services` (Billing clerk) `{ "name": "Brain MRI", "price": 2500 }` -> 201
+```json
+{ "id": "…", "name": "Brain MRI", "price": 2500.00, "createdAt": "…", "updatedAt": "…" }
+```
+`PUT /api/services/{id}` takes the same body. Duplicate name (ignoring case and spaces) -> 409; price below 0,
+more than 2 decimals or above 99,999,999.99 -> 400.
+
+### Invoices
+`POST /api/invoices` (Billing clerk). Only services and quantities: no prices or totals.
+```json
+{ "patientId": "…", "appointmentId": "…",
+  "items": [ { "serviceId": "<Neurology consultation>", "quantity": 1 },
+             { "serviceId": "<Brain MRI>", "quantity": 2, "icd10Code": "C71" },
+             { "serviceId": "<Report>", "quantity": 2 } ] }
+```
+201, `Location: /api/invoices/{id}`:
+```json
+{ "id": "…", "patientId": "…", "appointmentId": "…", "status": "UNPAID", "issueDate": "2026-11-05",
+  "totalAmount": 6400.00,
+  "items": [
+    { "id": "…", "serviceId": "…", "serviceName": "Neurology consultation", "icd10Code": null, "quantity": 1, "unitPrice": 800.00, "lineTotal": 800.00 },
+    { "id": "…", "serviceId": "…", "serviceName": "Brain MRI", "icd10Code": "C71", "quantity": 2, "unitPrice": 2500.00, "lineTotal": 5000.00 },
+    { "id": "…", "serviceId": "…", "serviceName": "Report", "icd10Code": null, "quantity": 2, "unitPrice": 300.00, "lineTotal": 600.00 } ],
+  "payment": null, "createdAt": "…", "updatedAt": "…" }
+```
+`POST /api/invoices/{id}/cancel` -> 200 with `"status": "CANCELLED"`; on a PAID or CANCELLED invoice -> 409.
+`GET /api/invoices?status=UNPAID` filters by `UNPAID`, `PAID` or `CANCELLED` (anything else -> 400).
+
+### Payment (simulated)
+`POST /api/invoices/{id}/pay`, **no request body** (any body -> 400). 201:
+```json
+{ "id": "…", "invoiceId": "…", "patientId": "…", "amountPaid": 6400.00, "status": "COMPLETED",
+  "paymentDate": "2026-11-25T10:00:00.123456Z" }
+```
+The invoice is now `PAID` and its `payment` field shows this object. `GET /api/payments` lists all payments,
+newest first.
+
+### Dashboard
+All take optional `from`/`to` (`YYYY-MM-DD`, inclusive, UTC; `from` after `to` -> 400).
+```
+GET /api/dashboard/patients/new-per-month   -> [ { "month": "2026-09", "count": 3 }, ... ]
+GET /api/dashboard/diagnoses/by-category    -> [ { "category": "G40", "description": "Epilepsy and recurrent seizures", "count": 3 }, ... ]
+GET /api/dashboard/appointments/by-status   -> [ { "status": "SCHEDULED", "count": 3 }, ... all 4 statuses ]
+GET /api/dashboard/mri-orders/per-week      -> [ { "isoWeek": "2026-W37", "weekStart": "2026-09-07", "count": 2 }, ... ]
+GET /api/dashboard/finance                  -> { "revenue": 10600.00, "completedPayments": 4, "unpaidCount": 2, "unpaidAmount": 9700.00 }
+```
+Range applies to: patient `created_at`, `diagnosed_at`, appointment `scheduled_time`, MRI order `created_at`,
+`payment_date` (revenue) and invoice `issue_date` (unpaid). HL7 and scanner QA metrics are TODO hooks for their
+owners (`DashboardService`).
+
+## Business rules
+
+- **Authors come from the token.** The diagnosing/prescribing neurologist and the audit actor are always
+  `CurrentUser`; ids in the request body are ignored.
+- **Price snapshot.** Each invoice line stores `unit_price`, copied from the catalogue when the invoice is created.
+  Changing a service's price later only affects new invoices. (Existing rows were backfilled in V5 from
+  `line_total / quantity`, i.e. what was actually charged.)
+- **Server-side totals.** `line_total = unit_price × quantity`, `total_amount = Σ line_total`, all `BigDecimal`
+  scale 2 HALF_UP. Clients cannot send prices, totals or a status. Every line total and the invoice total must
+  be ≤ 99,999,999.99 (the `NUMERIC(10,2)` limit), otherwise 400 and nothing is saved. At least one item;
+  quantity 1 to 1000; an ICD-10 code, if given, must exist; the appointment, if given, must belong to the patient.
+- **Invoice status machine.**
+  ```
+  UNPAID --cancel (clerk)-----------------> CANCELLED   (final)
+  UNPAID --pay (clerk or own patient)-----> PAID        (final)
+  ```
+  Cancel or pay on a final invoice -> 409. Both lock the invoice row, so a concurrent cancel and payment (or a
+  double click on "pay") cannot both succeed.
+- **Simulated payment.** No payment provider and no card, account or bank data anywhere (no such columns or
+  fields; the pay endpoint rejects any body). Paying creates one `COMPLETED` payment for the full total and sets
+  the invoice to `PAID` in the same transaction as its audit entry. An invoice totalling 0.00 cannot be paid (409,
+  because `amount_paid` must be > 0); cancel it instead.
+- **Revenue** on the dashboard is the sum of `COMPLETED` payments only; unpaid invoices are reported separately and
+  cancelled invoices appear in neither.
+- **Audit.** `DIAGNOSIS_CREATED`, `TREATMENT_PLAN_CREATED`, `PRESCRIPTION_CREATED`, `SERVICE_CREATED`,
+  `SERVICE_UPDATED`, `INVOICE_CREATED`, `INVOICE_CANCELLED`, `PAYMENT_COMPLETED`, each written in the same
+  transaction as the change (no change without its audit row, and vice versa).
+- **Migrations.** V3 (ICD-10 table + FKs), V4 (`diagnosis.notes`, `prescription.staff_id`), V5
+  (`invoice_item.unit_price`, unique `service.name`).
 
 ## ICD-10 reference data
 

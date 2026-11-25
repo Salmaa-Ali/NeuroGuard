@@ -169,6 +169,10 @@ public class InvoiceService {
         return toPage(invoices);
     }
 
+    /**
+     * Backs both the clerk's per-patient view and the patient's "My invoices" page; 404 for an unknown
+     * patient so staff can tell "no invoices" from a wrong id (patients never get here for other ids).
+     */
     @Transactional(readOnly = true)
     public PageResponse<InvoiceResponse> listForPatient(UUID patientId, InvoiceStatus status, int page, int size) {
         if (!patientRepository.existsById(patientId)) {

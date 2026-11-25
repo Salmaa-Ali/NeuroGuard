@@ -1,6 +1,6 @@
 # NeuroGuard Backend
 
-Spring Boot 3.5 / Java 21 / PostgreSQL 16 / Flyway. Status: data model, JWT authentication, role/scope authorization and admin staff endpoints. Permission rules: [`docs/permissions.md`](../docs/permissions.md).
+Spring Boot 3.5 / Java 21 / PostgreSQL 16 / Flyway. Status: data model, JWT authentication, role/scope authorization, admin staff endpoints, ICD-10, clinical records, billing (simulated payment) and dashboard. Permission rules: [`docs/permissions.md`](../docs/permissions.md).
 
 ## Prerequisites
 - JDK 21
@@ -37,6 +37,19 @@ Flyway applies `V1__init_schema.sql` on startup and Hibernate validates the enti
 **Docker Desktop must be running.** The integration tests start a throwaway Postgres 16 with Testcontainers
 and run Flyway for real, so they never touch the shared Neon database (even if your `.env` points at it).
 Running the app itself does not need Docker.
+GitHub Actions (`.github/workflows/backend-tests.yml`) runs the same tests on every push and pull request,
+so you can rely on CI if Docker is not available locally.
+
+## Optional profiles: `seed` and `icd10-import`
+Both are off unless you name them, and both **write to whatever `DB_URL` points at: check `.env` first and never
+run them from a feature branch against the shared Neon DB**. Keep `dev` in the list (otherwise `JWT_SECRET` is required).
+
+| Profile | What it does | Run |
+|---|---|---|
+| `seed` | Idempotent fictional TEST data (staff per scope, 10 patients, services, appointments, MRI orders, diagnoses, plans, invoices, payments) with fixed dates. Refuses to run on a `neon.tech` URL unless `seed.allow-shared-db=true`. | `.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev,seed"` |
+| `icd10-import` | Upserts the full CMS ICD-10-CM order file (download it yourself, never commit it) from `icd10.import.file`, idempotently, and logs counts. | `.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev,icd10-import" "-Dspring-boot.run.arguments=--icd10.import.file=C:/data/icd10cm_order_2026.txt --spring.main.web-application-type=none"` |
+
+Seeded logins (dev-only password), expected dashboard totals and importer details: [`docs/clinical-billing.md`](../docs/clinical-billing.md).
 
 ## Environment variables
 Set them in `backend/.env` (git-ignored, see `.env.example`) or as real environment variables.
@@ -85,6 +98,7 @@ Not implemented yet: login rate limiting/lockout and token revocation (role chan
 | `POST /api/admin/staff`, `GET /api/admin/staff` (paged: `page`, `size` max 100, `sortBy` = name/email/createdAt), `GET /api/admin/staff/{id}`, `PATCH /api/admin/staff/{id}/role` | Admin |
 | `GET /api/me` | Any authenticated user: returns `{ id, name, email, userType, role, scope }` for the caller |
 | `GET /api/patients/{patientId}` | Neurologist, Radiologist, MRI tech, Billing clerk, or the patient (own) |
+| ICD-10, diagnoses, treatment plans, prescriptions, service catalogue, invoices, payments, dashboard | See [`docs/clinical-billing.md`](../docs/clinical-billing.md) (examples, business rules) and [`docs/permissions.md`](../docs/permissions.md) |
 
 Staff rules: `CLINICAL_STAFF` needs a `permissionScope`, `ADMIN` must have none (400); duplicate email 409;
 password 8 to 72 characters; the last remaining ADMIN cannot be demoted (409). Password hashes are never returned.
@@ -97,6 +111,6 @@ Every error uses one shape:
 Throw `ResourceNotFoundException` (404), `ConflictException` (409) or `BadRequestException` (400) from services.
 
 ## Layout
-`com.neuroguard.{config, common, security, auth, patient, staff, appointment, clinical, billing, imaging, scanner, audit}`;
-each module has `entity/`, `repository/` and placeholder `service/`, `controller/`, `dto/` packages.
+`com.neuroguard.{config, common, security, auth, patient, staff, appointment, clinical, billing, icd10, dashboard, seed, imaging, scanner, audit}`;
+each module has `entity/`, `repository/`, `service/`, `controller/` and `dto/` packages (some still placeholders).
 Notes: the `service` table maps to `ServiceItem`; `audit_log.actor_id` is polymorphic (staff or patient) so it has no FK.

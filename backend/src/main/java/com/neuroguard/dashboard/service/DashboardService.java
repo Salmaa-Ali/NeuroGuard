@@ -37,11 +37,16 @@ public class DashboardService {
         this.repository = repository;
     }
 
+    /** Only months with registrations are returned, so an empty range gives an empty list rather than zeros. */
     @Transactional(readOnly = true)
     public List<MonthCount> newPatientsPerMonth(DateRange range) {
         return repository.newPatientsPerMonth(range);
     }
 
+    /**
+     * Grouped by the 3-character ICD-10 category so detailed codes (G40909) roll up with their category (G40);
+     * counts only, so it is safe for roles without access to individual diagnoses.
+     */
     @Transactional(readOnly = true)
     public List<CategoryCount> diagnosesByCategory(DateRange range) {
         return repository.diagnosesByCategory(range);

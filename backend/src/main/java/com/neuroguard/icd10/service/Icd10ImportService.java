@@ -55,6 +55,7 @@ public class Icd10ImportService {
     public record ImportResult(int linesRead, int inserted, int updated, int unchanged, int skipped) {
     }
 
+    /** Entry point for the runner: the yearly CMS file is read from disk, never bundled in the jar. */
     @Transactional
     public ImportResult importFile(Path file) {
         try (InputStream in = Files.newInputStream(file)) {
