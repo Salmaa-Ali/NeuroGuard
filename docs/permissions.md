@@ -15,6 +15,7 @@ a rule, change it here in the same PR as the code.
 | Invoices & payments | R | - | - | - | - | RW | own R + pay |
 | Scanners & calibration | R | R | R | R | RW | - | - |
 | Audit log | R | - | - | - | - | - | - |
+| ICD-10 codes (reference data) | R | R | R | R | R | R | - |
 
 ## Identity model
 - Two account types: **staff** (table `staff`) and **patients** (table `patient`).
@@ -60,6 +61,7 @@ Tokens with inconsistent claims (e.g. `CLINICAL_STAFF` without `perm_scope`) are
 | `GET /api/me` | Any authenticated user (own identity) |
 | `POST/GET /api/admin/staff`, `GET /api/admin/staff/{id}`, `PATCH /api/admin/staff/{id}/role` | Admin only |
 | `GET /api/patients/{patientId}` | Neurologist, Radiologist, MRI tech, Billing clerk, or the patient (own) |
+| `GET /api/icd10?q=`, `GET /api/icd10/{code}` | Any staff (`Authz.ANY_STAFF`); patients 403 |
 
 ## Known limits (for later)
 - Role changes do not revoke tokens already issued; they carry the old role until they expire.

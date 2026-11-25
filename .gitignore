@@ -1,1 +1,5 @@
 .DS_Store
+
+# CMS ICD-10-CM data files (public domain, ~74k codes): download them, never commit them
+icd10cm_order_*.txt
+icd10cm*.zip

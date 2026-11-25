@@ -1,0 +1,9 @@
+00001 G20     0 Parkinson's disease                                          Parkinson's disease
+00002 G30     0 Alzheimer's disease                                          Alzheimer's disease
+00003 G40     0 Epilepsy and recurrent seizures                              Epilepsy and recurrent seizures
+00004 G400    0 Local-rel idio epi w seiz of loc onset                       Localization-related (focal) (partial) idiopathic epilepsy and epileptic syndromes with seizures of localized onset
+
+00005 G40901  1 Epilepsy, unsp, not intractable, with status epilepticus     Epilepsy, unspecified, not intractable, with status epilepticus
+00006 G43909  1 Migraine, unsp, not intractable, without status migrainosus  Migraine, unspecified, not intractable, without status migrainosus
+00099 BAD
+00007 G43909  1 duplicate                                                    Migraine, duplicate row
