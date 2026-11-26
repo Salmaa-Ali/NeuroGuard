@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { toast } from 'sonner'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
@@ -228,15 +229,25 @@ function RoleFields({
   )
 }
 
+const PASSWORD_MIN = 8
+const PASSWORD_MAX = 72
+
 function StaffCreateForm({ onDone }: { onDone: () => void }) {
   const create = useCreateStaff()
   const [f, setF] = useState({ name: '', email: '', password: '' })
   const [role, setRole] = useState<BaseRole>('CLINICAL_STAFF')
   const [scope, setScope] = useState<string>('')
   const [busy, setBusy] = useState(false)
+  const [passwordInvalid, setPasswordInvalid] = useState(false)
 
   async function submit(e: FormEvent) {
     e.preventDefault()
+    // Same rule as the backend (CreateStaffRequest): 8 to 72 characters.
+    if (f.password.length < PASSWORD_MIN || f.password.length > PASSWORD_MAX) {
+      setPasswordInvalid(true)
+      return
+    }
+    setPasswordInvalid(false)
     setBusy(true)
     try {
       const res = await create.mutateAsync({
@@ -249,7 +260,12 @@ function StaffCreateForm({ onDone }: { onDone: () => void }) {
       toast.success(`Added ${res.name}`)
       onDone()
     } catch (err) {
-      toast.error(toApiError(err).message || 'Failed to add staff')
+      const apiError = toApiError(err)
+      if (apiError.fieldErrors.some((fe) => fe.field === 'password')) {
+        setPasswordInvalid(true)
+      } else {
+        toast.error(apiError.message || 'Failed to add staff')
+      }
     } finally {
       setBusy(false)
     }
@@ -257,6 +273,14 @@ function StaffCreateForm({ onDone }: { onDone: () => void }) {
 
   return (
     <form onSubmit={submit} noValidate className="space-y-4">
+      {passwordInvalid && (
+        <Alert variant="destructive">
+          <AlertTitle>Password does not meet the rules</AlertTitle>
+          <AlertDescription>
+            The password must be between {PASSWORD_MIN} and {PASSWORD_MAX} characters long.
+          </AlertDescription>
+        </Alert>
+      )}
       {(['name', 'email', 'password'] as const).map((k) => (
         <div key={k} className="space-y-1.5">
           <Label htmlFor={k} className="capitalize">
