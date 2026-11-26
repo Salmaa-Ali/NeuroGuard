@@ -9,6 +9,11 @@ export interface FeatureRoute {
   access: Access
   /** Set to show the route in the sidebar (only for users the access rule allows). */
   navLabel?: string
+  /**
+   * Optional: who sees the sidebar entry, when that differs from who may open the page
+   * (e.g. readers may open /scanners from a link, but only some roles get it in the menu). Defaults to `access`.
+   */
+  navAccess?: Access
 }
 
 /**

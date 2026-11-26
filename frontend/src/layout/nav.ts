@@ -12,7 +12,7 @@ const DASHBOARD: NavItem = { label: 'Dashboard', to: '/' }
 export function getAreas(user: AccessSubject | null): NavItem[] {
   return features
     .flatMap((f) => f.routes)
-    .filter((r) => r.navLabel && isAllowed(user, r.access))
+    .filter((r) => r.navLabel && isAllowed(user, r.navAccess ?? r.access))
     .map((r) => ({ label: r.navLabel!, to: r.path }))
 }
 

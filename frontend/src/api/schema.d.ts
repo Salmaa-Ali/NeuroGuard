@@ -4,6 +4,263 @@
  */
 
 export interface paths {
+    "/api/services/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get"];
+        put: operations["update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scanners/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_1"];
+        put: operations["update_1"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scanners/{id}/accessories/{accessoryId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateAccessory"];
+        post?: never;
+        delete: operations["deleteAccessory"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/qa-tests/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["update_2"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treatment-plans/{planId}/prescriptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listPrescriptions"];
+        put?: never;
+        post: operations["addPrescription"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/services": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list"];
+        put?: never;
+        post: operations["create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scanners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_1"];
+        put?: never;
+        post: operations["create_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scanners/{id}/calibrations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["history"];
+        put?: never;
+        post: operations["recordCalibration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scanners/{id}/accessories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["addAccessory"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/qa-tests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_2"];
+        put?: never;
+        post: operations["create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/patients/{patientId}/treatment-plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listPlans"];
+        put?: never;
+        post: operations["createPlan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/patients/{patientId}/diagnoses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_3"];
+        put?: never;
+        post: operations["create_3"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/mri-orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_4"];
+        put?: never;
+        post: operations["create_4"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/invoices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_5"];
+        put?: never;
+        post: operations["create_5"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/invoices/{id}/pay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Simulated payment of the full invoice total (no request body) */
+        post: operations["pay"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/invoices/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/staff/login": {
         parameters: {
             query?: never;
@@ -14,6 +271,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["staffLogin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/patient/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["registerPatient"];
         delete?: never;
         options?: never;
         head?: never;
@@ -36,6 +309,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/appointments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_6"];
+        put?: never;
+        post: operations["create_6"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/staff": {
         parameters: {
             query?: never;
@@ -43,13 +348,61 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["list"];
+        get: operations["list_7"];
         put?: never;
-        post: operations["create"];
+        post: operations["create_7"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/scanners/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["changeStatus"];
+        trace?: never;
+    };
+    "/api/mri-orders/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["status"];
+        trace?: never;
+    };
+    "/api/appointments/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["status_1"];
         trace?: never;
     };
     "/api/admin/staff/{id}/role": {
@@ -68,6 +421,70 @@ export interface paths {
         patch: operations["changeRole"];
         trace?: never;
     };
+    "/api/scanners/{id}/qa-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["qaSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scanners/qa-overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["overview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_8"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/patients": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_9"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/patients/{patientId}": {
         parameters: {
             query?: never;
@@ -75,7 +492,87 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["get"];
+        get: operations["get_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/patients/{patientId}/mri-orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listPatient"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/patients/{patientId}/invoices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listForPatient"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/patients/{patientId}/appointments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listPatient_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/patients/by-number/{patientNumber}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getByNumber"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/mri-orders/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_3"];
         put?: never;
         post?: never;
         delete?: never;
@@ -100,6 +597,118 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/invoices/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_4"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/icd10": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/icd10/{code}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_5"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/diagnoses/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_6"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/calibrations/{sessionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_7"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/audit-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_10"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/appointments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_8"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/staff/{id}": {
         parameters: {
             query?: never;
@@ -107,7 +716,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["get_1"];
+        get: operations["get_9"];
         put?: never;
         post?: never;
         delete?: never;
@@ -120,6 +729,301 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        ServiceRequest: {
+            name: string;
+            price: number;
+        };
+        ServiceResponse: {
+            /** Format: uuid */
+            id?: string;
+            name?: string;
+            price?: number;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+        };
+        ScannerRequest: {
+            name: string;
+            manufacturer: string;
+            model: string;
+            serialNumber: string;
+            stationName?: string;
+            /** Format: double */
+            fieldStrength: number;
+            location?: string;
+            /** Format: date */
+            installDate?: string;
+            /** Format: int32 */
+            calibrationIntervalDays: number;
+        };
+        AccessoryResponse: {
+            /** Format: uuid */
+            id?: string;
+            name?: string;
+            type?: string;
+            serialNumber?: string;
+        };
+        CalibrationSummary: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            scannerId?: string;
+            /** Format: date-time */
+            performedAt?: string;
+            /** Format: uuid */
+            performedById?: string;
+            performedByName?: string;
+            /** @enum {string} */
+            result?: "PASS" | "FAIL";
+            /** Format: date */
+            nextDueDate?: string;
+            /** Format: double */
+            riskScore?: number;
+            certificateRef?: string;
+            /** Format: date-time */
+            recordedAt?: string;
+        };
+        ScannerDetail: {
+            /** Format: uuid */
+            id?: string;
+            name?: string;
+            manufacturer?: string;
+            model?: string;
+            serialNumber?: string;
+            stationName?: string;
+            /** Format: double */
+            fieldStrength?: number;
+            /** @enum {string} */
+            status?: "ACTIVE" | "OUT_OF_SERVICE" | "RETIRED";
+            location?: string;
+            /** Format: date */
+            installDate?: string;
+            /** Format: int32 */
+            calibrationIntervalDays?: number;
+            /** @enum {string} */
+            qaStatus?: "NEVER_CALIBRATED" | "FAILED" | "OVERDUE" | "DUE_SOON" | "OK";
+            latestSession?: components["schemas"]["CalibrationSummary"];
+            accessories?: components["schemas"]["AccessoryResponse"][];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+        };
+        AccessoryRequest: {
+            name: string;
+            type?: string;
+            serialNumber?: string;
+        };
+        QaTestRequest: {
+            code: string;
+            name: string;
+            unit?: string;
+            lowerLimit?: number;
+            upperLimit?: number;
+            reference?: string;
+            placeholder?: boolean;
+            active?: boolean;
+        };
+        QaTestResponse: {
+            /** Format: uuid */
+            id?: string;
+            code?: string;
+            name?: string;
+            unit?: string;
+            lowerLimit?: number;
+            upperLimit?: number;
+            reference?: string;
+            placeholder?: boolean;
+            active?: boolean;
+        };
+        CreatePrescriptionRequest: {
+            medicationDetails: string;
+        };
+        PrescriptionResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            planId?: string;
+            medicationDetails?: string;
+            /** Format: uuid */
+            staffId?: string;
+            staffName?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        Measurement: {
+            /** Format: uuid */
+            qaTestId: string;
+            measuredValue: number;
+        };
+        RecordCalibrationRequest: {
+            /** Format: date-time */
+            performedAt: string;
+            notes?: string;
+            certificateRef?: string;
+            measurements: components["schemas"]["Measurement"][];
+        };
+        CalibrationDetail: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            scannerId?: string;
+            scannerName?: string;
+            /** Format: date-time */
+            performedAt?: string;
+            /** Format: uuid */
+            performedById?: string;
+            performedByName?: string;
+            /** @enum {string} */
+            result?: "PASS" | "FAIL";
+            /** Format: date */
+            nextDueDate?: string;
+            /** Format: double */
+            riskScore?: number;
+            notes?: string;
+            certificateRef?: string;
+            /** Format: date-time */
+            recordedAt?: string;
+            measurements?: components["schemas"]["MeasurementResponse"][];
+        };
+        MeasurementResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            qaTestId?: string;
+            qaTestCode?: string;
+            qaTestName?: string;
+            unit?: string;
+            measuredValue?: number;
+            lowerLimit?: number;
+            upperLimit?: number;
+            withinTolerance?: boolean;
+        };
+        CreateTreatmentPlanRequest: {
+            description: string;
+            /** Format: date */
+            startDate: string;
+            /** Format: date */
+            endDate?: string;
+        };
+        TreatmentPlanResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            patientId?: string;
+            description?: string;
+            /** Format: date */
+            startDate?: string;
+            /** Format: date */
+            endDate?: string;
+            /** Format: uuid */
+            staffId?: string;
+            staffName?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            prescriptions?: components["schemas"]["PrescriptionResponse"][];
+        };
+        CreateDiagnosisRequest: {
+            icd10Code: string;
+            /** Format: date-time */
+            diagnosedAt?: string;
+            notes?: string;
+        };
+        DiagnosisResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            patientId?: string;
+            icd10Code?: string;
+            icd10Description?: string;
+            icd10Category?: string;
+            /** Format: date-time */
+            diagnosedAt?: string;
+            notes?: string;
+            /** Format: uuid */
+            staffId?: string;
+            staffName?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        CreateMriOrderRequest: {
+            /** Format: uuid */
+            appointmentId: string;
+            accessionNumber: string;
+            indication?: string;
+        };
+        MriOrderResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            appointmentId?: string;
+            /** Format: uuid */
+            patientId?: string;
+            patientName?: string;
+            accessionNumber?: string;
+            indication?: string;
+            /** @enum {string} */
+            status?: "ORDERED" | "SCHEDULED" | "ACQUIRED" | "REPORTED" | "CANCELLED";
+        };
+        CreateInvoiceRequest: {
+            /** Format: uuid */
+            patientId: string;
+            /** Format: uuid */
+            appointmentId?: string;
+            items: components["schemas"]["Item"][];
+        };
+        Item: {
+            /** Format: uuid */
+            serviceId: string;
+            /** Format: int32 */
+            quantity: number;
+            icd10Code?: string;
+        };
+        InvoiceItemResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            serviceId?: string;
+            serviceName?: string;
+            icd10Code?: string;
+            /** Format: int32 */
+            quantity?: number;
+            unitPrice?: number;
+            lineTotal?: number;
+        };
+        InvoiceResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            patientId?: string;
+            /** Format: uuid */
+            appointmentId?: string;
+            /** @enum {string} */
+            status?: "UNPAID" | "PAID" | "CANCELLED";
+            /** Format: date */
+            issueDate?: string;
+            totalAmount?: number;
+            items?: components["schemas"]["InvoiceItemResponse"][];
+            payment?: components["schemas"]["PaymentResponse"];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+        };
+        PaymentResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            invoiceId?: string;
+            /** Format: uuid */
+            patientId?: string;
+            amountPaid?: number;
+            /** @enum {string} */
+            status?: "PENDING" | "COMPLETED" | "FAILED" | "REFUNDED";
+            /** Format: date-time */
+            paymentDate?: string;
+        };
         LoginRequest: {
             /** Format: email */
             email: string;
@@ -136,6 +1040,44 @@ export interface components {
             role?: "ADMIN" | "CLINICAL_STAFF" | "PATIENT";
             /** @enum {string} */
             scope?: "NEUROLOGIST" | "RADIOLOGIST" | "MRI_TECHNOLOGIST" | "BIOMEDICAL_ENGINEER" | "BILLING_CLERK";
+        };
+        RegisterPatientRequest: {
+            name: string;
+            /** Format: email */
+            email: string;
+            password: string;
+            /** Format: date */
+            dateOfBirth: string;
+            phone?: string;
+            neurologyHistory?: string;
+        };
+        CreateAppointmentRequest: {
+            /** Format: uuid */
+            patientId: string;
+            /** Format: uuid */
+            staffId?: string;
+            /** Format: date-time */
+            scheduledTime: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            reason?: string;
+        };
+        AppointmentResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            patientId?: string;
+            patientName?: string;
+            /** Format: uuid */
+            staffId?: string;
+            staffName?: string;
+            /** Format: date-time */
+            scheduledTime?: string;
+            /** Format: int32 */
+            durationMinutes?: number;
+            /** @enum {string} */
+            status?: "SCHEDULED" | "COMPLETED" | "CANCELLED" | "MISSED";
+            reason?: string;
         };
         CreateStaffRequest: {
             name: string;
@@ -161,11 +1103,134 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
         };
+        ScannerStatusRequest: {
+            /** @enum {string} */
+            status: "ACTIVE" | "OUT_OF_SERVICE" | "RETIRED";
+        };
+        StatusRequest: {
+            /** @enum {string} */
+            status: "ORDERED" | "SCHEDULED" | "ACQUIRED" | "REPORTED" | "CANCELLED";
+        };
         ChangeStaffRoleRequest: {
             /** @enum {string} */
             baseRole: "ADMIN" | "CLINICAL_STAFF";
             /** @enum {string} */
             permissionScope?: "NEUROLOGIST" | "RADIOLOGIST" | "MRI_TECHNOLOGIST" | "BIOMEDICAL_ENGINEER" | "BILLING_CLERK";
+        };
+        PageResponseServiceResponse: {
+            content?: components["schemas"]["ServiceResponse"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        PageResponseScannerListItem: {
+            content?: components["schemas"]["ScannerListItem"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        ScannerListItem: {
+            /** Format: uuid */
+            id?: string;
+            name?: string;
+            manufacturer?: string;
+            model?: string;
+            /** Format: double */
+            fieldStrength?: number;
+            stationName?: string;
+            /** @enum {string} */
+            status?: "ACTIVE" | "OUT_OF_SERVICE" | "RETIRED";
+            /** @enum {string} */
+            qaStatus?: "NEVER_CALIBRATED" | "FAILED" | "OVERDUE" | "DUE_SOON" | "OK";
+            /** Format: date-time */
+            lastQaAt?: string;
+            /** @enum {string} */
+            lastQaResult?: "PASS" | "FAIL";
+            /** Format: date */
+            nextDueDate?: string;
+            /** Format: double */
+            riskScore?: number;
+        };
+        QaSummary: {
+            /** Format: uuid */
+            scannerId?: string;
+            scannerName?: string;
+            /** Format: double */
+            fieldStrength?: number;
+            /** @enum {string} */
+            qaStatus?: "NEVER_CALIBRATED" | "FAILED" | "OVERDUE" | "DUE_SOON" | "OK";
+            flaggedForReview?: boolean;
+            /** Format: date-time */
+            lastQaAt?: string;
+            /** @enum {string} */
+            lastQaResult?: "PASS" | "FAIL";
+            /** Format: date */
+            nextDueDate?: string;
+            /** Format: double */
+            riskScore?: number;
+            /** Format: uuid */
+            sourceSessionId?: string;
+            /** Format: date-time */
+            sourceSessionRecordedAt?: string;
+            /** Format: date */
+            evaluatedOn?: string;
+        };
+        PageResponseCalibrationSummary: {
+            content?: components["schemas"]["CalibrationSummary"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        QaOverview: {
+            /** Format: int64 */
+            total?: number;
+            /** Format: int64 */
+            ok?: number;
+            /** Format: int64 */
+            dueSoon?: number;
+            /** Format: int64 */
+            overdue?: number;
+            /** Format: int64 */
+            failed?: number;
+            /** Format: int64 */
+            neverCalibrated?: number;
+        };
+        PageResponsePaymentResponse: {
+            content?: components["schemas"]["PaymentResponse"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        PageResponsePatientSummary: {
+            content?: components["schemas"]["PatientSummary"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
         };
         PatientSummary: {
             /** Format: uuid */
@@ -178,6 +1243,61 @@ export interface components {
             phone?: string;
             neurologyHistory?: string;
         };
+        PageResponseTreatmentPlanResponse: {
+            content?: components["schemas"]["TreatmentPlanResponse"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        PageResponseMriOrderResponse: {
+            content?: components["schemas"]["MriOrderResponse"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        PageResponseInvoiceResponse: {
+            content?: components["schemas"]["InvoiceResponse"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        PageResponseDiagnosisResponse: {
+            content?: components["schemas"]["DiagnosisResponse"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        PageResponseAppointmentResponse: {
+            content?: components["schemas"]["AppointmentResponse"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
         MeResponse: {
             /** Format: uuid */
             id?: string;
@@ -189,6 +1309,47 @@ export interface components {
             role?: "ADMIN" | "CLINICAL_STAFF" | "PATIENT";
             /** @enum {string} */
             scope?: "NEUROLOGIST" | "RADIOLOGIST" | "MRI_TECHNOLOGIST" | "BIOMEDICAL_ENGINEER" | "BILLING_CLERK";
+        };
+        Icd10Response: {
+            code?: string;
+            description?: string;
+            category?: string;
+        };
+        PageResponseIcd10Response: {
+            content?: components["schemas"]["Icd10Response"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
+        };
+        AuditLogResponse: {
+            /** Format: uuid */
+            id?: string;
+            /** Format: uuid */
+            actorId?: string;
+            /** @enum {string} */
+            actorType?: "STAFF" | "PATIENT";
+            action?: string;
+            entityType?: string;
+            /** Format: uuid */
+            entityId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        PageResponseAuditLogResponse: {
+            content?: components["schemas"]["AuditLogResponse"][];
+            /** Format: int32 */
+            page?: number;
+            /** Format: int32 */
+            size?: number;
+            /** Format: int64 */
+            totalElements?: number;
+            /** Format: int32 */
+            totalPages?: number;
         };
         PageResponseStaffResponse: {
             content?: components["schemas"]["StaffResponse"][];
@@ -210,6 +1371,688 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ServiceResponse"];
+                };
+            };
+        };
+    };
+    update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ServiceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ServiceResponse"];
+                };
+            };
+        };
+    };
+    get_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ScannerDetail"];
+                };
+            };
+        };
+    };
+    update_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScannerRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ScannerDetail"];
+                };
+            };
+        };
+    };
+    updateAccessory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                accessoryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccessoryRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AccessoryResponse"];
+                };
+            };
+        };
+    };
+    deleteAccessory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                accessoryId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    update_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QaTestRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["QaTestResponse"];
+                };
+            };
+        };
+    };
+    listPrescriptions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                planId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PrescriptionResponse"][];
+                };
+            };
+        };
+    };
+    addPrescription: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                planId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePrescriptionRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PrescriptionResponse"];
+                };
+            };
+        };
+    };
+    list: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseServiceResponse"];
+                };
+            };
+        };
+    };
+    create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ServiceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ServiceResponse"];
+                };
+            };
+        };
+    };
+    list_1: {
+        parameters: {
+            query?: {
+                status?: "ACTIVE" | "OUT_OF_SERVICE" | "RETIRED";
+                qaStatus?: "NEVER_CALIBRATED" | "FAILED" | "OVERDUE" | "DUE_SOON" | "OK";
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseScannerListItem"];
+                };
+            };
+        };
+    };
+    create_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScannerRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ScannerDetail"];
+                };
+            };
+        };
+    };
+    history: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseCalibrationSummary"];
+                };
+            };
+        };
+    };
+    recordCalibration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecordCalibrationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CalibrationDetail"];
+                };
+            };
+        };
+    };
+    addAccessory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccessoryRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AccessoryResponse"];
+                };
+            };
+        };
+    };
+    list_2: {
+        parameters: {
+            query?: {
+                activeOnly?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["QaTestResponse"][];
+                };
+            };
+        };
+    };
+    create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QaTestRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["QaTestResponse"];
+                };
+            };
+        };
+    };
+    listPlans: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                patientId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseTreatmentPlanResponse"];
+                };
+            };
+        };
+    };
+    createPlan: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patientId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTreatmentPlanRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["TreatmentPlanResponse"];
+                };
+            };
+        };
+    };
+    list_3: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                patientId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseDiagnosisResponse"];
+                };
+            };
+        };
+    };
+    create_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patientId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateDiagnosisRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DiagnosisResponse"];
+                };
+            };
+        };
+    };
+    list_4: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseMriOrderResponse"];
+                };
+            };
+        };
+    };
+    create_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMriOrderRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["MriOrderResponse"];
+                };
+            };
+        };
+    };
+    list_5: {
+        parameters: {
+            query?: {
+                status?: "UNPAID" | "PAID" | "CANCELLED";
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseInvoiceResponse"];
+                };
+            };
+        };
+    };
+    create_5: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateInvoiceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["InvoiceResponse"];
+                };
+            };
+        };
+    };
+    pay: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": string;
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PaymentResponse"];
+                };
+            };
+        };
+    };
+    cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["InvoiceResponse"];
+                };
+            };
+        };
+    };
     staffLogin: {
         parameters: {
             query?: never;
@@ -225,6 +2068,30 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LoginResponse"];
+                };
+            };
+        };
+    };
+    registerPatient: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterPatientRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -258,7 +2125,78 @@ export interface operations {
             };
         };
     };
-    list: {
+    login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["LoginResponse"];
+                };
+            };
+        };
+    };
+    list_6: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseAppointmentResponse"];
+                };
+            };
+        };
+    };
+    create_6: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAppointmentRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AppointmentResponse"];
+                };
+            };
+        };
+    };
+    list_7: {
         parameters: {
             query?: {
                 page?: number;
@@ -282,7 +2220,7 @@ export interface operations {
             };
         };
     };
-    create: {
+    create_7: {
         parameters: {
             query?: never;
             header?: never;
@@ -302,6 +2240,84 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["StaffResponse"];
+                };
+            };
+        };
+    };
+    changeStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScannerStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ScannerDetail"];
+                };
+            };
+        };
+    };
+    status: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["MriOrderResponse"];
+                };
+            };
+        };
+    };
+    status_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AppointmentResponse"];
                 };
             };
         };
@@ -332,7 +2348,96 @@ export interface operations {
             };
         };
     };
-    get: {
+    qaSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["QaSummary"];
+                };
+            };
+        };
+    };
+    overview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["QaOverview"];
+                };
+            };
+        };
+    };
+    list_8: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponsePaymentResponse"];
+                };
+            };
+        };
+    };
+    list_9: {
+        parameters: {
+            query?: {
+                q?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponsePatientSummary"];
+                };
+            };
+        };
+    };
+    get_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -350,6 +2455,126 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["PatientSummary"];
+                };
+            };
+        };
+    };
+    listPatient: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                patientId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseMriOrderResponse"];
+                };
+            };
+        };
+    };
+    listForPatient: {
+        parameters: {
+            query?: {
+                status?: "UNPAID" | "PAID" | "CANCELLED";
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                patientId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseInvoiceResponse"];
+                };
+            };
+        };
+    };
+    listPatient_1: {
+        parameters: {
+            query?: {
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                patientId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseAppointmentResponse"];
+                };
+            };
+        };
+    };
+    getByNumber: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                patientNumber: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PatientSummary"];
+                };
+            };
+        };
+    };
+    get_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["MriOrderResponse"];
                 };
             };
         };
@@ -374,7 +2599,166 @@ export interface operations {
             };
         };
     };
-    get_1: {
+    get_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["InvoiceResponse"];
+                };
+            };
+        };
+    };
+    search: {
+        parameters: {
+            query?: {
+                q?: string;
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseIcd10Response"];
+                };
+            };
+        };
+    };
+    get_5: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["Icd10Response"];
+                };
+            };
+        };
+    };
+    get_6: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DiagnosisResponse"];
+                };
+            };
+        };
+    };
+    get_7: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sessionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CalibrationDetail"];
+                };
+            };
+        };
+    };
+    list_10: {
+        parameters: {
+            query?: {
+                action?: string;
+                actorType?: "STAFF" | "PATIENT";
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PageResponseAuditLogResponse"];
+                };
+            };
+        };
+    };
+    get_8: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["AppointmentResponse"];
+                };
+            };
+        };
+    };
+    get_9: {
         parameters: {
             query?: never;
             header?: never;

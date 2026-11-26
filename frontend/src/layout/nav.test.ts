@@ -12,6 +12,7 @@ describe('role-based navigation', () => {
       'Dashboard',
       'Staff management',
       'Audit log',
+      'Scanners & QA',
       'Reports',
     ])
   })
