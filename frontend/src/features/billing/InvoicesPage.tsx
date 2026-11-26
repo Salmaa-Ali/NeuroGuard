@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toApiError } from '@/api/errors'
+import { usePatients } from '@/features/patients/api'
 import { cn } from '@/lib/utils'
 import {
   useCreateInvoice,
@@ -151,6 +152,7 @@ function CreateInvoiceDialog({
   services: ServiceRecord[]
 }) {
   const createInvoice = useCreateInvoice()
+  const patientsQuery = usePatients('', 0, 100)
   const [patientId, setPatientId] = useState('')
   const [appointmentId, setAppointmentId] = useState('')
   const [items, setItems] = useState<DraftItem[]>([{ serviceId: '', quantity: '1', icd10Code: '' }])
@@ -178,9 +180,8 @@ function CreateInvoiceDialog({
     e.preventDefault()
     setError(null)
 
-    const pCheck = uuidSchema.safeParse(patientId)
-    if (!pCheck.success) {
-      return setError('Enter a valid Patient ID (UUID).')
+    if (!patientId) {
+      return setError('Select a patient.')
     }
 
     let parsedAppt: string | null = null
@@ -204,7 +205,7 @@ function CreateInvoiceDialog({
 
     try {
       await createInvoice.mutateAsync({
-        patientId: pCheck.data,
+        patientId,
         appointmentId: parsedAppt,
         items: payloadItems,
       })
@@ -241,14 +242,22 @@ function CreateInvoiceDialog({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="inv-patient">Patient ID (UUID)</Label>
-              <Input
+              <Label htmlFor="inv-patient">Patient</Label>
+              <select
                 id="inv-patient"
-                className="font-mono text-xs"
-                placeholder="00000000-0000-0000-0000-000000000000"
                 value={patientId}
                 onChange={(e) => setPatientId(e.target.value)}
-              />
+                className="h-9 w-full rounded-md border border-input bg-card px-2.5 text-sm"
+              >
+                <option value="">
+                  {patientsQuery.isLoading ? 'Loading patients…' : 'Choose a patient…'}
+                </option>
+                {(patientsQuery.data?.content ?? []).map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.patientNumber} — {p.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="inv-appt">Appointment ID (optional)</Label>

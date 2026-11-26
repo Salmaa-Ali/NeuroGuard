@@ -60,4 +60,8 @@ public final class Authz {
     public static final String PATIENT_PROFILE_READ =
             "(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BILLING_CLERK'))"
                     + " or @access.isSelf(#patientId)";
+
+    /** Patient list & lookup by patient_number: clinical staff scopes allowed to read patient profiles. */
+    public static final String PATIENT_LIST =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BILLING_CLERK')";
 }

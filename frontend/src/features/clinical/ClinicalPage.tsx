@@ -20,7 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { toApiError } from '@/api/errors'
 import { useAuth } from '@/auth/context'
-import { usePatient } from '@/features/patients/api'
+import { usePatient, usePatients } from '@/features/patients/api'
 import { cn } from '@/lib/utils'
 import {
   useAddPrescription,
@@ -43,12 +43,11 @@ export function ClinicalPage() {
   const { user } = useAuth()
   const [searchParams, setSearchParams] = useSearchParams()
   const initialPatientId = searchParams.get('patientId') ?? ''
-  const [inputValue, setInputValue] = useState(initialPatientId)
   const [activePatientId, setActivePatientId] = useState<string | null>(() => {
     const parsed = uuidSchema.safeParse(initialPatientId)
     return parsed.success ? parsed.data : null
   })
-  const [idError, setIdError] = useState<string | null>(null)
+  const [patientFilter, setPatientFilter] = useState('')
   const [tab, setTab] = useState<'diagnoses' | 'plans' | 'icd10'>('diagnoses')
 
   const [addingDiagnosis, setAddingDiagnosis] = useState(false)
@@ -57,20 +56,19 @@ export function ClinicalPage() {
   const [prescriptionTarget, setPrescriptionTarget] = useState<TreatmentPlanRecord | null>(null)
 
   const canWrite = user?.scope === 'NEUROLOGIST'
+  const patientsQuery = usePatients(patientFilter, 0, 100)
   const patientQuery = usePatient(activePatientId ?? '')
   const diagnosesQuery = usePatientDiagnoses(activePatientId)
   const plansQuery = usePatientTreatmentPlans(activePatientId)
 
-  function handleSelectPatient(e: FormEvent) {
-    e.preventDefault()
-    const parsed = uuidSchema.safeParse(inputValue)
-    if (!parsed.success) {
-      setIdError(parsed.error.issues[0]?.message ?? 'Invalid ID')
+  function handleSelectPatient(patientId: string) {
+    if (!patientId) {
+      setActivePatientId(null)
+      setSearchParams({})
       return
     }
-    setIdError(null)
-    setActivePatientId(parsed.data)
-    setSearchParams({ patientId: parsed.data })
+    setActivePatientId(patientId)
+    setSearchParams({ patientId })
   }
 
   return (
@@ -96,20 +94,35 @@ export function ClinicalPage() {
       />
 
       <div className="mb-6 rounded-2xl border border-border bg-card p-5 shadow-card">
-        <form onSubmit={handleSelectPatient} noValidate className="flex flex-wrap items-end gap-3">
-          <div className="min-w-[260px] flex-1 space-y-1.5">
-            <Label htmlFor="clinical-pid">Patient ID (UUID)</Label>
+        <div className="grid gap-3 sm:grid-cols-[240px_1fr]">
+          <div className="space-y-1.5">
+            <Label htmlFor="clinical-pfilter">Filter patients</Label>
             <Input
-              id="clinical-pid"
-              placeholder="00000000-0000-0000-0000-000000000000"
-              className="font-mono text-sm"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              id="clinical-pfilter"
+              placeholder="Search patient # or name…"
+              value={patientFilter}
+              onChange={(e) => setPatientFilter(e.target.value)}
             />
-            {idError && <p className="text-xs text-destructive">{idError}</p>}
           </div>
-          <Button type="submit">Load patient record</Button>
-        </form>
+          <div className="space-y-1.5">
+            <Label htmlFor="clinical-pselect">Select patient (by patient number)</Label>
+            <select
+              id="clinical-pselect"
+              value={activePatientId ?? ''}
+              onChange={(e) => handleSelectPatient(e.target.value)}
+              className="h-9 w-full rounded-md border border-input bg-card px-3 text-sm"
+            >
+              <option value="">
+                {patientsQuery.isLoading ? 'Loading patients…' : 'Choose a patient…'}
+              </option>
+              {(patientsQuery.data?.content ?? []).map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.patientNumber} — {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         {activePatientId && (
           <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3 text-sm">
