@@ -950,7 +950,6 @@ export interface components {
         CreateMriOrderRequest: {
             /** Format: uuid */
             appointmentId: string;
-            accessionNumber: string;
             indication?: string;
         };
         MriOrderResponse: {
