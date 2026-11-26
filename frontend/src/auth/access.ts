@@ -43,7 +43,15 @@ export const ACCESS = {
   studies: { scopes: ['RADIOLOGIST'] },
   dicomUpload: { scopes: ['MRI_TECHNOLOGIST'] },
   reports: { roles: ['ADMIN'], scopes: ['RADIOLOGIST'] },
-  scanners: { scopes: ['BIOMEDICAL_ENGINEER'] },
+  /** Sidebar entry "Scanners & QA": biomedical engineer and admin. */
+  scanners: { roles: ['ADMIN'], scopes: ['BIOMEDICAL_ENGINEER'] },
+  /** Scanners & calibration, read (Authz.SCANNER_READ): admin + four clinical scopes; not billing clerk or patients. */
+  scannersRead: {
+    roles: ['ADMIN'],
+    scopes: ['NEUROLOGIST', 'RADIOLOGIST', 'MRI_TECHNOLOGIST', 'BIOMEDICAL_ENGINEER'],
+  },
+  /** Scanners & calibration, write (Authz.SCANNER_WRITE): biomedical engineer only. */
+  scannersWrite: { scopes: ['BIOMEDICAL_ENGINEER'] },
   invoices: { scopes: ['BILLING_CLERK'] },
   payments: { scopes: ['BILLING_CLERK'] },
   auditLog: { roles: ['ADMIN'] },

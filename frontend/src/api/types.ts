@@ -45,3 +45,59 @@ export const PERMISSION_SCOPES: PermissionScope[] = [
   'BIOMEDICAL_ENGINEER',
   'BILLING_CLERK',
 ]
+
+// ---- Scanners & QA ----
+
+export type ScannerStatus = NonNullable<S['ScannerListItem']['status']>
+export type QaStatus = NonNullable<S['ScannerListItem']['qaStatus']>
+export type CalibrationResult = NonNullable<S['CalibrationSummary']['result']>
+
+export type ScannerListItem = NullableFields<
+  S['ScannerListItem'],
+  'stationName' | 'lastQaAt' | 'lastQaResult' | 'nextDueDate' | 'riskScore'
+>
+export type ScannerPage = Omit<Required<S['PageResponseScannerListItem']>, 'content'> & {
+  content: ScannerListItem[]
+}
+export type Accessory = NullableFields<S['AccessoryResponse'], 'type' | 'serialNumber'>
+export type CalibrationSummary = NullableFields<S['CalibrationSummary'], 'certificateRef'>
+export type CalibrationPage = Omit<Required<S['PageResponseCalibrationSummary']>, 'content'> & {
+  content: CalibrationSummary[]
+}
+export type ScannerDetail = Omit<
+  NullableFields<S['ScannerDetail'], 'stationName' | 'location' | 'installDate'>,
+  'latestSession' | 'accessories'
+> & {
+  latestSession: CalibrationSummary | null
+  accessories: Accessory[]
+}
+export type MeasurementRow = NullableFields<
+  S['MeasurementResponse'],
+  'unit' | 'lowerLimit' | 'upperLimit'
+>
+export type CalibrationDetail = Omit<
+  NullableFields<S['CalibrationDetail'], 'notes' | 'certificateRef'>,
+  'measurements'
+> & { measurements: MeasurementRow[] }
+export type QaTest = NullableFields<
+  S['QaTestResponse'],
+  'unit' | 'lowerLimit' | 'upperLimit' | 'reference'
+>
+export type QaSummary = NullableFields<
+  S['QaSummary'],
+  | 'lastQaAt'
+  | 'lastQaResult'
+  | 'nextDueDate'
+  | 'riskScore'
+  | 'sourceSessionId'
+  | 'sourceSessionRecordedAt'
+>
+export type QaOverview = Required<S['QaOverview']>
+
+export type ScannerInput = S['ScannerRequest']
+export type AccessoryInput = S['AccessoryRequest']
+export type QaTestInput = S['QaTestRequest']
+export type RecordCalibrationInput = S['RecordCalibrationRequest']
+
+export const SCANNER_STATUSES: ScannerStatus[] = ['ACTIVE', 'OUT_OF_SERVICE', 'RETIRED']
+export const QA_STATUSES: QaStatus[] = ['OK', 'DUE_SOON', 'OVERDUE', 'FAILED', 'NEVER_CALIBRATED']

@@ -19,4 +19,9 @@ public final class AuditAction {
     public static final String INVOICE_CREATED = "INVOICE_CREATED";
     public static final String INVOICE_CANCELLED = "INVOICE_CANCELLED";
     public static final String PAYMENT_COMPLETED = "PAYMENT_COMPLETED";
+    public static final String SCANNER_CREATED = "SCANNER_CREATED";
+    public static final String SCANNER_UPDATED = "SCANNER_UPDATED";
+    public static final String SCANNER_STATUS_CHANGED = "SCANNER_STATUS_CHANGED";
+    public static final String CALIBRATION_RECORDED = "CALIBRATION_RECORDED";
+    public static final String QA_TEST_CHANGED = "QA_TEST_CHANGED";
 }
