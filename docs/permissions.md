@@ -87,7 +87,7 @@ Tokens with inconsistent claims (e.g. `CLINICAL_STAFF` without `perm_scope`) are
 | `GET /api/mri-orders` | Neurologist, Radiologist, MRI tech (`Authz.MRI_ORDER_READ_ALL`) |
 | `GET /api/patients/{patientId}/mri-orders` | Same staff scopes, or the patient (own) |
 | `GET /api/mri-orders/{id}` | Same staff scopes, or the patient if the order is theirs |
-| `POST /api/mri-orders` | Neurologist (`Authz.MRI_ORDER_WRITE`) |
+| `POST /api/mri-orders` | Neurologist (`Authz.MRI_ORDER_WRITE`). 201; the server generates the accession number (`ACC-YYYY-NNNNNN`); 409 on a CANCELLED or MISSED appointment |
 | `PATCH /api/mri-orders/{id}/status` | MRI tech (`Authz.MRI_ORDER_STATUS_WRITE`) |
 | `GET /api/scanners` (filters `status`, `qaStatus`), `GET /api/scanners/{id}`, `GET /api/scanners/{id}/calibrations`, `GET /api/scanners/{id}/qa-summary`, `GET /api/scanners/qa-overview`, `GET /api/calibrations/{sessionId}`, `GET /api/qa-tests` | Admin, Neurologist, Radiologist, MRI tech, Biomedical engineer (`Authz.SCANNER_READ`); billing clerk and patients 403 |
 | `POST /api/scanners`, `PUT /api/scanners/{id}`, `PATCH /api/scanners/{id}/status`, `POST/PUT/DELETE /api/scanners/{id}/accessories[/{accessoryId}]`, `POST /api/scanners/{id}/calibrations`, `POST /api/qa-tests`, `PUT /api/qa-tests/{id}` | Biomedical engineer (`Authz.SCANNER_WRITE`) |

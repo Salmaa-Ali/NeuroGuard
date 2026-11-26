@@ -51,6 +51,7 @@ Set them in `backend/.env` (git-ignored, see `.env.example`) or as real environm
 | `JWT_SECRET` | none | HS256 signing key, **at least 32 bytes**. Required outside the `dev` profile (startup fails if missing/short). In `dev`, if unset, a random per-run key is used, so tokens stop working after every restart: set it in `.env` for a stable token. Generate one: `openssl rand -base64 48` |
 | `JWT_EXPIRY_MINUTES` | `60` | Access token lifetime |
 | `SCANNER_QA_DUE_SOON_DAYS` | `30` | `app.scanner.qa.due-soon-days`: a scanner whose QA is due within this many days shows as `DUE_SOON` |
+| `DEMO_DATA_ENABLED` | `false` | `app.demo-data.enabled`, dev profile only: `true` adds demo history to existing patients on startup (see "Demo data" below) |
 | `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` | none | If no ADMIN exists at startup, one is created from these (password min 8 chars). Skipped with a warning if unset. The password is never logged. Once an admin exists they are ignored, so remove them from `.env` afterwards. |
 
 All teammates share the same database, so share one `JWT_SECRET` only if you want to reuse each other's tokens (not required).
@@ -132,6 +133,36 @@ changes any patient study or report. The risk score is **indicative**, not a saf
   **The seeded ACR tolerances are example placeholder values** (`is_placeholder = true`, shown as
   "Placeholder: confirm with medical physicist"), used until the team decides on real tolerances.
   They are not for clinical use.
+
+## MRI orders
+- A neurologist creates an order with `POST /api/mri-orders` and a body of `{ appointmentId, indication }`.
+  The response is **201 Created** with the full order.
+- **The server generates the accession number**, as `ACC-YYYY-NNNNNN`, for example `ACC-2026-001000`.
+  - `YYYY` is the year the order was created, in UTC.
+  - `NNNNNN` comes from `accession_number_seq` (migration V8). It starts at 1000, never resets each year, and is
+    zero-padded to 6 digits.
+  - Numbers are 15 characters long, within the 16-character limit of the DICOM AccessionNumber tag.
+  - Any `accessionNumber` sent in the request is ignored.
+  - Orders created before V8 keep the numbers they already had.
+  - The sequence is not rolled back when a create fails, so the numbers can have gaps. That is expected.
+- The patient on an order is always the appointment's patient.
+- You can't order on a CANCELLED or MISSED appointment (no visit took place): the request gets 409. SCHEDULED and
+  COMPLETED are allowed, since ordering during or right after the visit is the usual case.
+- Creating an order writes `MRI_ORDER_CREATED` to the audit log, and a status change by the MRI tech writes
+  `MRI_ORDER_STATUS_CHANGED`. Both use entity type `MRI_ORDER`.
+
+## Demo data
+`DemoDataSeeder` runs only in the dev profile and only with `DEMO_DATA_ENABLED=true`, so a normal start never writes
+anything. For every existing patient, it adds:
+- two COMPLETED visits, one CANCELLED visit and one upcoming SCHEDULED visit, each with a neurologist that already
+  exists;
+- a REPORTED MRI order and an ORDERED MRI order, with generated accession numbers;
+- a PAID invoice (consultation plus MRI) with its payment, and an UNPAID invoice (consultation).
+
+Every seeded reason and indication starts with `Demo:`. A patient who already has a `Demo:` appointment is skipped,
+so running it again is safe. If the catalogue has no "Neurology consultation" service it adds one (500.00), and it
+reuses an existing MRI service. Run it once, then set the variable back to `false`:
+`DEMO_DATA_ENABLED=true ./mvnw spring-boot:run`
 
 ## Errors
 Every error uses one shape:
