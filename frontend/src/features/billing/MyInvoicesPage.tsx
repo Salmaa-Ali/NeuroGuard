@@ -1,11 +1,18 @@
-import { PlaceholderPage } from '../../components/PlaceholderPage'
+import { PageHeader } from '@/components/app/PageHeader'
+import { InvoiceList } from '@/components/app/InvoiceList'
+import { useAuth } from '@/auth/context'
 
 export function MyInvoicesPage() {
+  const { user } = useAuth()
+
   return (
-    <PlaceholderPage
-      title="My invoices"
-      description="Your invoices and payment status, with the option to pay."
-      phase={2}
-    />
+    <>
+      <PageHeader
+        eyebrow="My care"
+        title="My invoices"
+        description="Your invoices and what is still outstanding."
+      />
+      <InvoiceList showPatient={false} patientId={user?.id} />
+    </>
   )
 }

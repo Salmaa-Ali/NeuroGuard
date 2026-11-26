@@ -11,7 +11,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-/** Creates the first ADMIN from BOOTSTRAP_ADMIN_EMAIL / BOOTSTRAP_ADMIN_PASSWORD if no ADMIN exists. */
+/** Creates or updates the ADMIN from BOOTSTRAP_ADMIN_EMAIL / BOOTSTRAP_ADMIN_PASSWORD. */
 @Component
 public class BootstrapAdminRunner implements ApplicationRunner {
 
@@ -30,26 +30,37 @@ public class BootstrapAdminRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        if (staffRepository.existsByBaseRole(BaseRole.ADMIN)) {
-            return;
-        }
         String email = properties.email();
         String password = properties.password();
+
+        log.info("Current staff accounts in DB: {}",
+                staffRepository.findAll().stream().map(s -> s.getEmail() + " (" + s.getBaseRole() + ")").toList());
+
         if (email == null || email.isBlank() || password == null || password.isBlank()) {
-            log.warn("No ADMIN exists and BOOTSTRAP_ADMIN_EMAIL / BOOTSTRAP_ADMIN_PASSWORD are not set: "
-                    + "no admin was created, so nobody can manage staff.");
+            if (!staffRepository.existsByBaseRole(BaseRole.ADMIN)) {
+                log.warn("No ADMIN exists and BOOTSTRAP_ADMIN_EMAIL / BOOTSTRAP_ADMIN_PASSWORD are not set: "
+                        + "no admin was created, so nobody can manage staff.");
+            }
             return;
         }
+
         if (password.length() < 8) {
             log.warn("BOOTSTRAP_ADMIN_PASSWORD must be at least 8 characters: no admin was created.");
             return;
         }
-        Staff admin = new Staff();
-        admin.setName("Administrator");
-        admin.setEmail(Emails.normalize(email));
-        admin.setPasswordHash(passwordEncoder.encode(password));
+
+        String normalizedEmail = Emails.normalize(email);
+        Staff admin = staffRepository.findByEmail(normalizedEmail).orElseGet(() -> {
+            Staff s = new Staff();
+            s.setName("Administrator");
+            s.setEmail(normalizedEmail);
+            return s;
+        });
+
         admin.setBaseRole(BaseRole.ADMIN);
+        admin.setPermissionScope(null);
+        admin.setPasswordHash(passwordEncoder.encode(password));
         staffRepository.save(admin);
-        log.info("Bootstrap admin created for {}", admin.getEmail());
+        log.info("Bootstrap admin ready: {} with configured password", admin.getEmail());
     }
 }

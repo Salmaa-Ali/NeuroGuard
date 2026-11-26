@@ -1,19 +1,19 @@
 import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 
 export function NotFoundPage() {
   return (
-    <div className="mx-auto max-w-md py-16 text-center">
-      <p className="text-5xl font-semibold text-accent-600">404</p>
-      <h1 className="mt-3 text-xl font-semibold text-slate-900">Page not found</h1>
-      <p className="mt-2 text-sm text-slate-600">
+    <div className="mx-auto max-w-md py-20 text-center">
+      <p className="text-6xl font-bold text-primary">404</p>
+      <h1 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">Page not found</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
         The page you are looking for doesn&apos;t exist or has moved.
       </p>
-      <Link
-        to="/"
-        className="mt-6 inline-block rounded-md bg-accent-600 px-4 py-2 text-sm font-medium text-white hover:bg-accent-700"
-      >
-        Back to dashboard
-      </Link>
+      <div className="mt-6">
+        <Button asChild>
+          <Link to="/">Back to dashboard</Link>
+        </Button>
+      </div>
     </div>
   )
 }

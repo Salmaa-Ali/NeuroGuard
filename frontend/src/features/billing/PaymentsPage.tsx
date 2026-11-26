@@ -1,11 +1,15 @@
-import { PlaceholderPage } from '../../components/PlaceholderPage'
+import { PageHeader } from '@/components/app/PageHeader'
+import { PaymentList } from '@/components/app/PaymentList'
 
 export function PaymentsPage() {
   return (
-    <PlaceholderPage
-      title="Payments"
-      description="Record and track payments against invoices."
-      phase={2}
-    />
+    <>
+      <PageHeader
+        eyebrow="Billing"
+        title="Payments"
+        description="Received payments, newest first."
+      />
+      <PaymentList />
+    </>
   )
 }

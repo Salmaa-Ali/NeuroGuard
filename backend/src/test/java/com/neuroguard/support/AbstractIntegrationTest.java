@@ -55,6 +55,7 @@ public abstract class AbstractIntegrationTest {
     @Autowired protected StaffRepository staffRepository;
     @Autowired protected PatientRepository patientRepository;
     @Autowired protected PasswordEncoder passwordEncoder;
+    @Autowired protected MutableClock testClock;
 
     protected Staff admin;
     protected Staff neurologist;
@@ -67,6 +68,7 @@ public abstract class AbstractIntegrationTest {
 
     @BeforeEach
     void createFixtures() {
+        testClock.reset();
         jdbc.execute("TRUNCATE TABLE audit_log, staff, patient CASCADE");
         String hash = passwordEncoder.encode(PASSWORD);
         admin = staff("admin@neuroguard.test", BaseRole.ADMIN, null, hash);

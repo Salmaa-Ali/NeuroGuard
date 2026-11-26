@@ -70,7 +70,7 @@ src/
   layout/     AppShell, Sidebar, Topbar, nav.ts (menu built from the features)
   features/   one folder per module, each with feature.tsx (routes + menu) and api.ts
     admin-staff  auth  dashboard  errors  patients            (working)
-    appointments  billing  clinical  imaging (+ viewer)  reports  scanners  audit  cdss   (placeholders)
+    appointments  billing  clinical  imaging (+ viewer)  reports  scanners  audit  cdss
   routes.tsx  collects every feature's routes; wraps each in <RequireRole>
   test/       msw server, render helpers, fake tokens
 ```
@@ -97,6 +97,28 @@ Teammates should not need to touch shared files.
 
 The DICOM viewer route is `/studies/:studyUid/viewer` (`src/features/imaging/viewer/ViewerPage.tsx`): an empty
 container for Cornerstone3D in Phase 3.
+
+## Scanners & QA (`src/features/scanners`)
+
+| Route | Who | What |
+| --- | --- | --- |
+| `/scanners` | readers (`ACCESS.scannersRead`) | List with QA status badge, next due date, risk score; filters by status and QA status |
+| `/scanners/:scannerId` | readers | Info card, coils, QA panel, calibration history; click a session for its measurements |
+| `/scanners/:scannerId/calibrations/new` | biomedical engineer (`ACCESS.scannersWrite`) | Record a session: one value per active QA test, live within/out-of-tolerance hint; the server's saved result is shown after submit |
+| `/scanners/qa-tests` | biomedical engineer | Add, edit, deactivate QA tests; placeholder tolerances are labelled |
+
+- Readers are admin, neurologist, radiologist, MRI technologist and biomedical engineer. The sidebar entry is
+  only shown to the biomedical engineer and admin: routes can set `navAccess` (see `features/types.ts`) when the
+  menu audience differs from who may open the page. Write buttons are hidden for everyone except the
+  biomedical engineer; the backend enforces the real rule.
+- QA status badge: OK green, Due soon amber, Overdue/Failed red with **"Flagged for review"**, Never calibrated grey.
+  It is a prompt for review only and never affects studies or reports. The risk score is always labelled
+  **"Risk score (indicative)"**.
+- **`<ScannerQaPanel scannerId=… />`** (exported from `src/features/scanners/index.ts`) is a read-only panel that
+  calls `GET /api/scanners/{id}/qa-summary`. The DICOM team can drop it into the viewer in Phase 3; for now it is
+  shown on the scanner detail page.
+- Tests: `QaStatusBadge.test.tsx` (badge mapping, tolerance helpers), `CalibrationForm.test.tsx` (validation and
+  tolerance hint), `ScannerPages.test.tsx` (read-only roles see no write buttons, billing clerk/patient get 403).
 
 ## Differences from the backend contract
 

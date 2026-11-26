@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
 import type { LoginInput, PermissionScope, Role, UserType } from '../api/types'
+import type { RegisterPatientInput } from './api'
 
 export interface AuthUser {
   id: string
@@ -20,6 +21,7 @@ export interface AuthContextValue {
    * Throws the axios error on failure so the caller can show the backend's message.
    */
   login: (credentials: LoginInput) => Promise<void>
+  registerPatient: (input: RegisterPatientInput) => Promise<void>
   logout: () => void
 }
 

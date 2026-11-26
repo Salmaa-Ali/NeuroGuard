@@ -68,4 +68,27 @@ public final class Authz {
     public static final String PATIENT_PROFILE_READ =
             "(hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BILLING_CLERK'))"
                     + " or @access.isSelf(#patientId)";
+
+    /** Patient list & lookup by patient_number: clinical staff scopes allowed to read patient profiles. */
+    public static final String PATIENT_LIST =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BILLING_CLERK')";
+
+    public static final String APPOINTMENT_READ_ALL =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BILLING_CLERK')";
+    public static final String APPOINTMENT_WRITE =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST')";
+    public static final String MRI_ORDER_READ_ALL =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST')";
+    public static final String MRI_ORDER_WRITE = APPOINTMENT_WRITE;
+    public static final String MRI_ORDER_STATUS_WRITE =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('MRI_TECHNOLOGIST')";
+
+    /** Scanners & calibration, read: Admin, Neurologist, Radiologist, MRI tech, Biomedical engineer. Billing clerk and patients none. */
+    public static final String SCANNER_READ =
+            "hasRole('ADMIN') or (hasRole('CLINICAL_STAFF') and "
+                    + "@access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BIOMEDICAL_ENGINEER'))";
+
+    /** Scanners, accessories, QA tests and calibration sessions, write: Biomedical engineer only. */
+    public static final String SCANNER_WRITE =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('BIOMEDICAL_ENGINEER')";
 }

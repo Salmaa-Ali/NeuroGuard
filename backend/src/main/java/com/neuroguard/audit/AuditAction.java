@@ -8,6 +8,7 @@ public final class AuditAction {
 
     public static final String LOGIN_SUCCESS = "LOGIN_SUCCESS";
     public static final String LOGIN_FAILED = "LOGIN_FAILED";
+    public static final String PATIENT_REGISTERED = "PATIENT_REGISTERED";
     public static final String STAFF_CREATED = "STAFF_CREATED";
     public static final String STAFF_ROLE_CHANGED = "STAFF_ROLE_CHANGED";
     public static final String DIAGNOSIS_CREATED = "DIAGNOSIS_CREATED";
@@ -18,4 +19,9 @@ public final class AuditAction {
     public static final String INVOICE_CREATED = "INVOICE_CREATED";
     public static final String INVOICE_CANCELLED = "INVOICE_CANCELLED";
     public static final String PAYMENT_COMPLETED = "PAYMENT_COMPLETED";
+    public static final String SCANNER_CREATED = "SCANNER_CREATED";
+    public static final String SCANNER_UPDATED = "SCANNER_UPDATED";
+    public static final String SCANNER_STATUS_CHANGED = "SCANNER_STATUS_CHANGED";
+    public static final String CALIBRATION_RECORDED = "CALIBRATION_RECORDED";
+    public static final String QA_TEST_CHANGED = "QA_TEST_CHANGED";
 }

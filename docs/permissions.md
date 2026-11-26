@@ -84,6 +84,23 @@ Tokens with inconsistent claims (e.g. `CLINICAL_STAFF` without `perm_scope`) are
 | `GET /api/payments` | Billing clerk or Admin (`Authz.INVOICE_READ_ALL`) |
 | `GET /api/dashboard/patients/new-per-month`, `/diagnoses/by-category`, `/appointments/by-status`, `/mri-orders/per-week` | Admin or Neurologist (`Authz.DASHBOARD_CLINICAL`) **proposed, confirm with team** |
 | `GET /api/dashboard/finance` | Admin or Billing clerk (`Authz.DASHBOARD_FINANCE`) **proposed, confirm with team** |
+| `GET /api/appointments` | Neurologist, Radiologist, MRI tech, Billing clerk (`Authz.APPOINTMENT_READ_ALL`) |
+| `GET /api/patients/{patientId}/appointments` | Same staff scopes, or the patient (own) |
+| `GET /api/appointments/{id}` | Same staff scopes, or the patient if the appointment is theirs |
+| `POST /api/appointments`, `PATCH /api/appointments/{id}/status` | Neurologist (`Authz.APPOINTMENT_WRITE`) |
+| `GET /api/mri-orders` | Neurologist, Radiologist, MRI tech (`Authz.MRI_ORDER_READ_ALL`) |
+| `GET /api/patients/{patientId}/mri-orders` | Same staff scopes, or the patient (own) |
+| `GET /api/mri-orders/{id}` | Same staff scopes, or the patient if the order is theirs |
+| `POST /api/mri-orders` | Neurologist (`Authz.MRI_ORDER_WRITE`) |
+| `PATCH /api/mri-orders/{id}/status` | MRI tech (`Authz.MRI_ORDER_STATUS_WRITE`) |
+| `GET /api/scanners` (filters `status`, `qaStatus`), `GET /api/scanners/{id}`, `GET /api/scanners/{id}/calibrations`, `GET /api/scanners/{id}/qa-summary`, `GET /api/scanners/qa-overview`, `GET /api/calibrations/{sessionId}`, `GET /api/qa-tests` | Admin, Neurologist, Radiologist, MRI tech, Biomedical engineer (`Authz.SCANNER_READ`); billing clerk and patients 403 |
+| `POST /api/scanners`, `PUT /api/scanners/{id}`, `PATCH /api/scanners/{id}/status`, `POST/PUT/DELETE /api/scanners/{id}/accessories[/{accessoryId}]`, `POST /api/scanners/{id}/calibrations`, `POST /api/qa-tests`, `PUT /api/qa-tests/{id}` | Biomedical engineer (`Authz.SCANNER_WRITE`) |
+
+Scanner QA rule: a FAILED or OVERDUE QA status is shown as "Flagged for review". It is a prompt for review
+only and never blocks, invalidates or changes any patient study or report.
+
+In the frontend, scanner pages open for every reader (`ACCESS.scannersRead`), but the sidebar entry
+"Scanners & QA" is only shown to the Biomedical engineer and Admin (`ACCESS.scanners`, via `navAccess`).
 
 ## Proposed rules to confirm
 - **Dashboard** (`/api/dashboard/*`): Admin sees every section, the Billing clerk only finance, the Neurologist
