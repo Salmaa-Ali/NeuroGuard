@@ -24,4 +24,6 @@ public final class AuditAction {
     public static final String SCANNER_STATUS_CHANGED = "SCANNER_STATUS_CHANGED";
     public static final String CALIBRATION_RECORDED = "CALIBRATION_RECORDED";
     public static final String QA_TEST_CHANGED = "QA_TEST_CHANGED";
+    public static final String MRI_ORDER_CREATED = "MRI_ORDER_CREATED";
+    public static final String MRI_ORDER_STATUS_CHANGED = "MRI_ORDER_STATUS_CHANGED";
 }
