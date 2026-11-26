@@ -38,6 +38,9 @@ app:
     qa:
       # A scanner whose QA is due within this many days shows as DUE_SOON.
       due-soon-days: ${SCANNER_QA_DUE_SOON_DAYS:30}
+  demo-data:
+    # Dev profile only: true adds demo appointments, MRI orders and invoices to existing patients (once each).
+    enabled: ${DEMO_DATA_ENABLED:false}
   bootstrap-admin:
     # If no ADMIN exists at startup, one is created from these. Skipped (with a warning) when unset.
     email: ${BOOTSTRAP_ADMIN_EMAIL:}
