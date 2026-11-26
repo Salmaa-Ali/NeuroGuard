@@ -80,6 +80,15 @@ Tokens with inconsistent claims (e.g. `CLINICAL_STAFF` without `perm_scope`) are
 | `GET /api/invoices/{id}` | Billing clerk, Admin, or the patient if the invoice is theirs (`Authz.INVOICE_READ_BY_RECORD` + service check) |
 | `POST /api/invoices/{id}/pay` (simulated, no request body) | Billing clerk, or the patient if the invoice is theirs (`Authz.INVOICE_PAY` + service check) |
 | `GET /api/payments` | Billing clerk or Admin (`Authz.INVOICE_READ_ALL`) |
+| `GET /api/appointments` | Neurologist, Radiologist, MRI tech, Billing clerk (`Authz.APPOINTMENT_READ_ALL`) |
+| `GET /api/patients/{patientId}/appointments` | Same staff scopes, or the patient (own) |
+| `GET /api/appointments/{id}` | Same staff scopes, or the patient if the appointment is theirs |
+| `POST /api/appointments`, `PATCH /api/appointments/{id}/status` | Neurologist (`Authz.APPOINTMENT_WRITE`) |
+| `GET /api/mri-orders` | Neurologist, Radiologist, MRI tech (`Authz.MRI_ORDER_READ_ALL`) |
+| `GET /api/patients/{patientId}/mri-orders` | Same staff scopes, or the patient (own) |
+| `GET /api/mri-orders/{id}` | Same staff scopes, or the patient if the order is theirs |
+| `POST /api/mri-orders` | Neurologist (`Authz.MRI_ORDER_WRITE`) |
+| `PATCH /api/mri-orders/{id}/status` | MRI tech (`Authz.MRI_ORDER_STATUS_WRITE`) |
 
 ## Known limits (for later)
 - Role changes do not revoke tokens already issued; they carry the old role until they expire.

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { matchPath, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Brain, Eye, EyeOff } from 'lucide-react'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -8,7 +8,18 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { toApiError } from '@/api/errors'
 import { useAuth } from '@/auth/context'
-import { getLogoutReason } from '@/auth/session'
+import { getLogoutReason, getSession } from '@/auth/session'
+import { isAllowed, type AccessSubject } from '@/auth/access'
+import { dashboard } from '@/features/dashboard/feature'
+import { features } from '@/features'
+
+function postLoginPath(from?: string, user: AccessSubject | null = getSession()) {
+  if (!from || !user) return '/'
+  const route = [...dashboard.routes, ...features.flatMap((feature) => feature.routes)].find((item) =>
+    matchPath({ path: item.path, end: true }, from),
+  )
+  return route && isAllowed(user, route.access) ? from : '/'
+}
 
 type Mode = 'login' | 'register' 
 const emailSchema = z.string().trim().min(1, 'Email is required').pipe(z.email('Enter a valid email'))
@@ -34,7 +45,7 @@ export function LoginPage() {
   // Already signed in (or just signed in): go where the user was heading.
   if (user) {
     const from = (location.state as { from?: string } | null)?.from
-    return <Navigate to={from ?? '/'} replace />
+    return <Navigate to={postLoginPath(from, user)} replace />
   }
 
   function switchMode(next: Mode) {
@@ -76,7 +87,7 @@ export function LoginPage() {
       if (mode === 'login') {
         await login({ email: em, password })
         const from = (location.state as { from?: string } | null)?.from
-        navigate(from ?? '/', { replace: true })
+        navigate(postLoginPath(from), { replace: true })
       } else if (mode === 'register') {
         await registerPatient({
           name: name.trim(),

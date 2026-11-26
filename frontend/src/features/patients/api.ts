@@ -26,11 +26,12 @@ export async function getPatientByNumber(patientNumber: string): Promise<Patient
   return data
 }
 
-export function usePatients(q = '', page = 0, size = 100) {
+export function usePatients(q = '', page = 0, size = 100, enabled = true) {
   return useQuery({
     queryKey: ['patients', q, page, size],
     queryFn: () => listPatients(q, page, size),
     placeholderData: keepPreviousData,
+    enabled,
   })
 }
 

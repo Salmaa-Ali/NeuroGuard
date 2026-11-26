@@ -31,6 +31,11 @@ public class AuthController {
         return authService.loginStaff(request);
     }
 
+    @PostMapping("/login")
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+        return authService.loginAny(request);
+    }
+
     @PostMapping("/patient/login")
     public LoginResponse patientLogin(@Valid @RequestBody LoginRequest request) {
         return authService.loginPatient(request);

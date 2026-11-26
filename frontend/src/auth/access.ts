@@ -37,8 +37,8 @@ export const ACCESS = {
 
   // Menu visibility per feature (see the role lists in the project brief)
   patientsMenu: { scopes: ['NEUROLOGIST', 'RADIOLOGIST', 'BILLING_CLERK'] },
-  appointments: { scopes: ['NEUROLOGIST'] },
-  mriOrders: { scopes: ['NEUROLOGIST', 'MRI_TECHNOLOGIST'] },
+  appointments: { scopes: ['NEUROLOGIST', 'RADIOLOGIST', 'MRI_TECHNOLOGIST', 'BILLING_CLERK'] },
+  mriOrders: { roles: ['PATIENT'], scopes: ['NEUROLOGIST', 'RADIOLOGIST', 'MRI_TECHNOLOGIST'] },
   clinical: { scopes: ['NEUROLOGIST'] },
   studies: { scopes: ['RADIOLOGIST'] },
   dicomUpload: { scopes: ['MRI_TECHNOLOGIST'] },

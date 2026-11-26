@@ -1,8 +1,6 @@
 import { api } from '../api/client'
 import type { LoginInput, LoginResult, Me } from '../api/types'
 
-export type LoginKind = 'staff' | 'patient'
-
 export interface RegisterPatientInput {
   name: string
   email: string
@@ -12,8 +10,8 @@ export interface RegisterPatientInput {
   neurologyHistory?: string | null
 }
 
-export async function loginRequest(kind: LoginKind, input: LoginInput): Promise<LoginResult> {
-  const { data } = await api.post<LoginResult>(`/api/auth/${kind}/login`, input)
+export async function loginRequest(input: LoginInput): Promise<LoginResult> {
+  const { data } = await api.post<LoginResult>('/api/auth/login', input)
   return data
 }
 

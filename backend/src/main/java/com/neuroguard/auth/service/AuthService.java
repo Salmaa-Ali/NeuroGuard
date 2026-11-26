@@ -63,6 +63,34 @@ public class AuthService {
                 staff.getPermissionScope());
     }
 
+    /** Single-endpoint login for the shared form: checks both account tables without a failed probe request. */
+    public LoginResponse loginAny(LoginRequest request) {
+        String email = Emails.normalize(request.email());
+        Optional<Staff> staff = staffRepository.findByEmail(email);
+        Optional<Patient> patient = patientRepository.findByEmail(email);
+        boolean staffMatches = passwordMatches(request.password(), staff.map(Staff::getPasswordHash));
+        boolean patientMatches = passwordMatches(request.password(), patient.map(Patient::getPasswordHash));
+        if (staffMatches) {
+            Staff account = staff.orElseThrow();
+            auditService.recordIndependent(ActorType.STAFF, account.getId(), AuditAction.LOGIN_SUCCESS, "STAFF", account.getId());
+            Role role = Role.valueOf(account.getBaseRole().name());
+            JwtService.IssuedToken token = jwtService.issue(UserType.STAFF, account.getId(), role, account.getPermissionScope());
+            return LoginResponse.bearer(token.value(), token.expiresInSeconds(), UserType.STAFF, role, account.getPermissionScope());
+        }
+        if (patientMatches) {
+            Patient account = patient.orElseThrow();
+            auditService.recordIndependent(ActorType.PATIENT, account.getId(), AuditAction.LOGIN_SUCCESS, "PATIENT", account.getId());
+            JwtService.IssuedToken token = jwtService.issue(UserType.PATIENT, account.getId(), Role.PATIENT, null);
+            return LoginResponse.bearer(token.value(), token.expiresInSeconds(), UserType.PATIENT, Role.PATIENT, null);
+        }
+        if (staff.isPresent()) {
+            auditService.recordIndependent(ActorType.STAFF, staff.get().getId(), AuditAction.LOGIN_FAILED, null, null);
+        } else {
+            auditService.recordIndependent(ActorType.PATIENT, patient.map(Patient::getId).orElse(null), AuditAction.LOGIN_FAILED, null, null);
+        }
+        throw new InvalidCredentialsException();
+    }
+
     public LoginResponse loginPatient(LoginRequest request) {
         Optional<Patient> found = patientRepository.findByEmail(Emails.normalize(request.email()));
         boolean ok = passwordMatches(request.password(), found.map(Patient::getPasswordHash));

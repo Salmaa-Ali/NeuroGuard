@@ -64,4 +64,14 @@ public final class Authz {
     /** Patient list & lookup by patient_number: clinical staff scopes allowed to read patient profiles. */
     public static final String PATIENT_LIST =
             "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BILLING_CLERK')";
+
+    public static final String APPOINTMENT_READ_ALL =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST','BILLING_CLERK')";
+    public static final String APPOINTMENT_WRITE =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST')";
+    public static final String MRI_ORDER_READ_ALL =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('NEUROLOGIST','RADIOLOGIST','MRI_TECHNOLOGIST')";
+    public static final String MRI_ORDER_WRITE = APPOINTMENT_WRITE;
+    public static final String MRI_ORDER_STATUS_WRITE =
+            "hasRole('CLINICAL_STAFF') and @access.hasAnyScope('MRI_TECHNOLOGIST')";
 }
