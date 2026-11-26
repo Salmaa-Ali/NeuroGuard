@@ -3,6 +3,7 @@ package com.neuroguard.support;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 /**
@@ -17,5 +18,12 @@ public class TestcontainersConfig {
     @ServiceConnection
     PostgreSQLContainer<?> postgres() {
         return new PostgreSQLContainer<>("postgres:16");
+    }
+
+    /** Replaces the app's system clock; follows real time unless a test fixes it. */
+    @Bean
+    @Primary
+    MutableClock testClock() {
+        return new MutableClock();
     }
 }

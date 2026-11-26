@@ -1,8 +1,11 @@
 package com.neuroguard.scanner.entity;
 
 import com.neuroguard.common.BaseEntity;
+import com.neuroguard.staff.entity.Staff;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,6 +21,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/** One QA session. result, next_due_date and risk_score are computed by the server, never sent by clients. */
 @Entity
 @Table(name = "calibration_session")
 @Getter
@@ -37,12 +41,24 @@ public class CalibrationSession extends BaseEntity {
     @Column(name = "performed_at", nullable = false)
     private Instant performedAt;
 
-    @Column(length = 100)
-    private String result;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "performed_by", nullable = false)
+    private Staff performedBy;
 
-    @Column(name = "next_due_date")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private CalibrationResult result;
+
+    @Column(name = "next_due_date", nullable = false)
     private LocalDate nextDueDate;
 
-    @Column(name = "risk_score")
+    /** Indicative 0-100 score stored when the session was recorded. Not a safety verdict. */
+    @Column(name = "risk_score", nullable = false)
     private Double riskScore;
+
+    @Column(columnDefinition = "text")
+    private String notes;
+
+    @Column(name = "certificate_ref", length = 100)
+    private String certificateRef;
 }

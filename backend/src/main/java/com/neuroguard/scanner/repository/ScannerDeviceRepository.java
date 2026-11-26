@@ -8,4 +8,8 @@ import java.util.UUID;
 public interface ScannerDeviceRepository extends JpaRepository<ScannerDevice, UUID> {
 
     boolean existsBySerialNumber(String serialNumber);
+
+    boolean existsBySerialNumberAndIdNot(String serialNumber, UUID id);
+
+    boolean existsByNameStartingWith(String prefix);
 }
