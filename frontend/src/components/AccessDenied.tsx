@@ -5,7 +5,7 @@ export function AccessDenied() {
   return (
     <div className="mx-auto max-w-md py-16 text-center">
       <p className="text-5xl font-semibold text-accent-600">403</p>
-      <h1 className="mt-3 text-xl font-semibold text-slate-900">
+      <h1 className="mt-3 text-xl font-semibold text-white">
         You don&apos;t have access to this page
       </h1>
       <p className="mt-2 text-sm text-slate-600">
